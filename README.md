@@ -81,7 +81,8 @@ mod into the `mods/` folder. Both the client and the server need the mod.
 ## Licence
 
 Released under **LGPL-3.0-or-later OR MIT** (dual licence): the Mixin injection layer is
-`LGPL-3.0-or-later OR MIT`, everything else is MIT. Both licence texts are in
+`LGPL-3.0-or-later OR MIT`, everything else is MIT except the item textures, which are
+LGPL-3.0. Both licence texts are in
 [`LICENSE`](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/blob/main/LICENSE).
 
 - [Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) is
@@ -93,7 +94,9 @@ Released under **LGPL-3.0-or-later OR MIT** (dual licence): the Mixin injection 
 - Gameplay is inspired by [Sophisticated Backpacks](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks)'
   stack upgrade (All Rights Reserved). No code, textures, models, sounds or language files from
   it are used, and no affiliation is implied.
-- All of this mod's textures are original pixel art.
+- The upgrade-plate silhouette of the item textures is derived from Traveler's Backpack's
+  own upgrade icons (LGPL-3.0), so those textures are licensed LGPL-3.0; the stack glyph
+  and the mod icon are drawn for this mod.
 
 ## Issues
 
@@ -178,7 +181,7 @@ Released under **LGPL-3.0-or-later OR MIT** (dual licence): the Mixin injection 
 ## 许可证
 
 本 MOD 采用 **LGPL-3.0-or-later OR MIT 双许可**：Mixin 注入层为
-`LGPL-3.0-or-later OR MIT`，其余全部代码与资源为 MIT，两份协议全文见
+`LGPL-3.0-or-later OR MIT`，其余代码为 MIT，贴图为 LGPL-3.0，两份协议全文见
 [`LICENSE`](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/blob/main/LICENSE)。
 
 - [旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) 采用
@@ -188,7 +191,8 @@ Released under **LGPL-3.0-or-later OR MIT** (dual licence): the Mixin injection 
 - 玩法灵感来自 [精妙背包](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks)
   的堆叠升级（All Rights Reserved）；未使用其任何代码、贴图、模型、音效或语言文件，
   也不暗示任何官方关联。
-- 本 MOD 的全部贴图均为原创像素画。
+- 贴图的板身轮廓取自旅行者背包自带的升级图标（LGPL-3.0），因此贴图按 LGPL-3.0 发布；
+  堆叠符号与模组图标为本 MOD 自绘。
 
 ## 问题反馈
 

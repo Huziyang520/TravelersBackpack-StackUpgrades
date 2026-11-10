@@ -2,8 +2,10 @@ This project is dual-licensed:
 
   * The Mixin injection layer (src/main/java/.../mixin/) is licensed under
     LGPL-3.0-or-later OR MIT (see the SPDX headers in each file).
-  * Everything else (code, resources, art, docs) is licensed under the
-    MIT license reproduced below.
+  * Everything else (code, resources, docs) is licensed under the MIT
+    license reproduced below, except the item textures: their upgrade-plate
+    silhouette is derived from Traveler's Backpack's own upgrade icons
+    (LGPL-3.0), so those textures are licensed LGPL-3.0.
 
 You may use this project under either license at your option. Both full
 license texts are included in this file: the MIT license first, followed by
