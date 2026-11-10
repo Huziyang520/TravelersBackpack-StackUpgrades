@@ -18,7 +18,7 @@ package com.tbsu.stackupgrades.mixin;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.sorter.ContainerSorter;
 import com.tiviacz.travelersbackpack.inventory.sorter.SortSelector;
-import com.tbsu.stackupgrades.util.ClientOptimizations;
+import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.StackLimits;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -87,7 +87,7 @@ public class ContainerSorterMixin {
      */
     @Inject(method = "combineStacks", at = @At("HEAD"), cancellable = true)
     private static void tbstackupgrades$combineToCapacity(ItemStack target, ItemStack source, CallbackInfo ci) {
-        if (!ClientOptimizations.sorterStacking) {
+        if (!StackUpgradesConfig.sorterStacking) {
             return;
         }
         BackpackWrapper wrapper = tbstackupgrades$sorting.get();

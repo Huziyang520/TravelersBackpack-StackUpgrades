@@ -9,7 +9,7 @@
 
 package com.tbsu.stackupgrades.mixin;
 
-import com.tbsu.stackupgrades.util.ClientOptimizations;
+import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.StackLimits;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -42,7 +42,7 @@ public abstract class AbstractContainerMenuMixin {
     @Inject(method = "moveItemStackTo", at = @At("HEAD"))
     private void tbstackupgrades$markRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                            CallbackInfoReturnable<Boolean> cir) {
-        tbstackupgrades$stackable.set(ClientOptimizations.quickTransferStacking
+        tbstackupgrades$stackable.set(StackUpgradesConfig.quickTransferStacking
                 && !stack.isEmpty()
                 && StackLimits.hasUpgradedSlot((AbstractContainerMenu) (Object) this, startIndex, endIndex));
     }

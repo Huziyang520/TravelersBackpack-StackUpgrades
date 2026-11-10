@@ -57,7 +57,9 @@ mod into the `mods/` folder. Both the client and the server need the mod.
 
 ## Configuration
 
-`config/tbstackupgrades.properties` is generated on first launch:
+The config screen is available from Mod Menu (it is provided by Forge Config API Port,
+which is optional: without it the mod runs on the defaults below). Settings live in
+`config/tbstackupgrades-common.toml`:
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -67,13 +69,11 @@ mod into the `mods/` folder. Both the client and the server need the mod.
 | `lootEnabled` | `true` | Put the upgrades into structure loot |
 | `lootChanceMultiplier` | `1.0` | Scales every loot chance (0 - 5) |
 | `lootTier4Chance` | `0.01` | Chance of the tier 4 upgrade in bastion treasure |
-| `configVersion` | `3` | Internal marker used for config migration; leave it alone |
-
 Loot follows the tier order: early structures drop the starter and tier 1, mid-game
 structures add tier 2, and tier 3 only appears in end-game structures. Tier 4 is
 limited to bastion treasure.
 
-Client options live in `config/tbstackupgrades-client.properties`:
+Client options live in `config/tbstackupgrades-client.toml`:
 
 | Key | Default | Meaning |
 |---|---|---|
@@ -175,7 +175,8 @@ LGPL-3.0. Both licence texts are in
 
 ## 配置
 
-首次启动生成 `config/tbstackupgrades.properties`：
+模组列表（Mod Menu）里的「配置」按钮可打开配置界面——界面由 Forge Config API Port 提供，
+该库为可选：未安装时本 MOD 按下面的默认值运行。配置文件为 `config/tbstackupgrades-common.toml`：
 
 | 键 | 默认值 | 说明 |
 |---|---|---|
@@ -185,12 +186,10 @@ LGPL-3.0. Both licence texts are in
 | `lootEnabled` | `true` | 是否把升级放进结构战利品 |
 | `lootChanceMultiplier` | `1.0` | 所有战利品概率的倍率（0–5） |
 | `lootTier4Chance` | `0.01` | 堡垒遗迹出四级升级的概率 |
-| `configVersion` | `3` | 配置迁移用的内部标记，不要手改 |
-
 战利品按等级推进：早期结构只出入门与一级，中期结构加入二级，三级只在末期结构，
 四级仅限堡垒遗迹宝藏。
 
-客户端选项在 `config/tbstackupgrades-client.properties`：
+客户端选项在 `config/tbstackupgrades-client.toml`：
 
 | 键 | 默认值 | 说明 |
 |---|---|---|

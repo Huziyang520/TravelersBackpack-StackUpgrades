@@ -27,6 +27,10 @@ dependencies {
     // any Maven, so it is vendored under targets/<target>/libs/ (git ignored) and only used
     // to compile against its API. Nothing from it is bundled.
     compileOnly files("${rootDir}/libs/${travelersbackpack_jar}")
+
+    // Optional: only the config screen and TOML support come from it. Everything
+    // touching it is guarded by isModLoaded, so it is never a hard requirement.
+    compileOnly files("${rootDir}/libs/${forgeconfigapiport_jar}")
 }
 
 configurations {

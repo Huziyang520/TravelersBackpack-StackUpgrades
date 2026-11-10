@@ -22,6 +22,7 @@ dependencies {
 
     // Required at runtime and installed by the player; never bundled.
     compileOnly files("${rootDir}/libs/${travelersbackpack_jar}")
+    compileOnly files("${rootDir}/libs/${forgeconfigapiport_jar}")
 }
 
 loom {

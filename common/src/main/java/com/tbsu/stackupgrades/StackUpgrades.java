@@ -9,7 +9,6 @@
 package com.tbsu.stackupgrades;
 
 import com.tbsu.stackupgrades.loot.StackUpgradeLoot;
-import com.tbsu.stackupgrades.util.ClientOptimizations;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
@@ -36,7 +35,6 @@ public class StackUpgrades implements ModInitializer {
     @Override
     public void onInitialize() {
         StackUpgradesConfig.load();
-        ClientOptimizations.load();
         ModItems.register();
         StackUpgradeLoot.register();
 

@@ -21,6 +21,9 @@
   "entrypoints": {
     "main": [
       "com.tbsu.stackupgrades.StackUpgrades"
+    ],
+    "client": [
+      "com.tbsu.stackupgrades.client.StackUpgradesClient"
     ]
   },
   "mixins": [
@@ -32,6 +35,10 @@
     "minecraft": "${minecraft_version_range_fabric}",
     "java": ">=25",
     "travelersbackpack": ">=11.4.0"
+  },
+  "recommends": {
+    "modmenu": "*",
+    "forgeconfigapiport": "*"
   },
   "icon": "assets/tbstackupgrades/icon.png"
 }
