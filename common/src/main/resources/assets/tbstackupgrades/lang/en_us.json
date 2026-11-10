@@ -1,0 +1,16 @@
+{
+  "item.tbstackupgrades.stack_upgrade_starter": "Stack Upgrade (Starter Tier)",
+  "item.tbstackupgrades.stack_upgrade_tier_1": "Stack Upgrade (Tier 1)",
+  "item.tbstackupgrades.stack_upgrade_tier_2": "Stack Upgrade (Tier 2)",
+  "item.tbstackupgrades.stack_upgrade_tier_3": "Stack Upgrade (Tier 3)",
+  "item.tbstackupgrades.stack_upgrade_tier_4": "Stack Upgrade (Tier 4)",
+  "item.tbstackupgrades.tooltip.multiplier": "Multiplies the number of items per backpack slot by %s",
+  "item.tbstackupgrades.tooltip.slot_limit": "A full stack of 64 becomes %s",
+  "item.tbstackupgrades.tooltip.stacking": "Stacks with other stack upgrades - duplicates of the same tier work too",
+  "screen.tbstackupgrades.stack_upgrade": "Stack Upgrade",
+  "screen.tbstackupgrades.multiplier": "Items per slot: x%s",
+  "screen.tbstackupgrades.slot_limit": "Slot capacity: %s (for a 64 stack)",
+  "tooltip.tbstackupgrades.capacity": "Amount: %s / %s",
+  "message.tbstackupgrades.cannot_remove_upgrade": "A slot holds more than %s items - cannot remove this upgrade",
+  "screen.tbstackupgrades.current_limit": "Current slot capacity: %s"
+}

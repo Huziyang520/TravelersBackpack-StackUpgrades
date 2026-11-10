@@ -1,0 +1,63 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    // The common module compiles once against a patched Minecraft; every loader module
+    // recompiles the same sources against its own loader. 26.3 Fabric ships official
+    // (Mojang) names, so one compile base is enough for both.
+    version = neoforge_version
+}
+
+repositories {
+    // 国内镜像与 Maven Central 放在前面：本机访问 maven.neoforged.net 会 TLS 握手失败，
+    // 而 Fabric 的公共依赖在镜像与官方源上都有，因此让它们优先被解析。
+    maven { name = 'AliyunPublic'; url = 'https://maven.aliyun.com/repository/public' }
+    mavenCentral()
+    maven { name = 'Fabric'; url = 'https://maven.fabricmc.net/' }
+}
+
+dependencies {
+    // Recompiled again inside the loader module; compile time only.
+    compileOnly("net.fabricmc:fabric-loader:${fabric_loader_version}")
+    compileOnly("net.fabricmc.fabric-api:fabric-api:${fabric_version}")
+
+    // Traveler's Backpack is a runtime dependency provided by the player. Its jar is not on
+    // any Maven, so it is vendored under targets/<target>/libs/ (git ignored) and only used
+    // to compile against its API. Nothing from it is bundled.
+    compileOnly files("${rootDir}/libs/${travelersbackpack_jar}")
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}
+
+// Implement mcgradleconventions loader attribute
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+configurations.matching { it.name in ['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'] }.configureEach {
+    attributes {
+        attribute(loaderAttribute, 'common')
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName].each { variant ->
+        configurations.named(variant) {
+            attributes {
+                attribute(loaderAttribute, 'common')
+            }
+        }
+    }
+}

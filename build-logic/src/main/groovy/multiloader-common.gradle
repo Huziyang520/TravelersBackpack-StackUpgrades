@@ -1,0 +1,94 @@
+plugins {
+    id 'java-library'
+}
+
+// 每个 target 有自己的输出目录：模块源码是共享的，产物不能互相覆盖
+// （targets/<target>/build/<module>/libs/…）。
+layout.buildDirectory = rootProject.layout.buildDirectory.dir(project.name)
+
+base {
+    // 产物名：<mod_id>-<loader>-<MC 区间>-<version>.jar
+    archivesName = "${mod_id}-${project.name}-${minecraft_version_slug}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+}
+
+// 源码含中文注释：Windows 默认 GBK 会让 javac 报「不可映射字符」，统一钉 UTF-8。
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// 不出 javadoc：本仓库不做库发布，且 javadoc 在 Java 25 下会因 doclint 卡死构建。
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+    options.addStringOption('Xdoclint:none', '-quiet')
+    failOnError = false
+}
+
+tasks.withType(Jar).configureEach {
+    from(project(':common').file('../../LICENSE')) {
+        rename { "${it}_${mod_name}" }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'   : mod_name,
+                'Specification-Vendor'  : mod_author,
+                'Specification-Version' : project.jar.archiveVersion,
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': project.jar.archiveVersion,
+                'Implementation-Vendor' : mod_author,
+                'Built-On-Minecraft'    : minecraft_version
+        ])
+    }
+}
+
+// Gradle 9 hands `gradle.properties` values back as ISO-8859-1 even though the file is UTF-8,
+// so every non-ASCII character arrives as mojibake (中文变成 "è¿™ä¸ª"). Re-decode such values;
+// a value that already contains characters above U+00FF was decoded correctly and is left alone.
+String decodeProp(Object value) {
+    String s = String.valueOf(value)
+    if (s.codePoints().anyMatch { int cp -> cp > 0xFF }) {
+        return s
+    }
+    String fixed = new String(s.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1),
+            java.nio.charset.StandardCharsets.UTF_8)
+    return fixed.contains('\uFFFD') ? s : fixed
+}
+
+processResources {
+    // 钉住过滤字符集，避免中文经平台默认编码（GBK）二次编码。
+    filteringCharset = 'UTF-8'
+
+    var expandProps = [
+            'version'                      : version,
+            'group'                        : project.group,
+            'minecraft_version'            : minecraft_version,
+            'minecraft_version_slug'       : minecraft_version_slug,
+            'minecraft_version_range'      : minecraft_version_range,
+            'minecraft_version_range_fabric': minecraft_version_range_fabric,
+            'fabric_version'               : fabric_version,
+            'fabric_loader_version'        : fabric_loader_version,
+            'mod_name'                     : mod_name,
+            'mod_author'                   : mod_author,
+            'mod_id'                       : mod_id,
+            'license'                      : license,
+            'description'                  : decodeProp(project.description),
+            'java_version'                 : java_version
+    ]
+
+    var jsonExpandProps = expandProps.collectEntries {
+        key, value -> [(key): value instanceof String ? value.replace('\n', '\\\\n') : value]
+    }
+
+    filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
+        expand jsonExpandProps
+    }
+
+    inputs.properties(expandProps)
+}

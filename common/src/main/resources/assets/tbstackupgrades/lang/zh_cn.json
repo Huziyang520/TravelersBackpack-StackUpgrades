@@ -1,0 +1,16 @@
+{
+  "item.tbstackupgrades.stack_upgrade_starter": "堆叠升级（入门）",
+  "item.tbstackupgrades.stack_upgrade_tier_1": "堆叠升级（一级）",
+  "item.tbstackupgrades.stack_upgrade_tier_2": "堆叠升级（二级）",
+  "item.tbstackupgrades.stack_upgrade_tier_3": "堆叠升级（三级）",
+  "item.tbstackupgrades.stack_upgrade_tier_4": "堆叠升级（四级）",
+  "item.tbstackupgrades.tooltip.multiplier": "背包内单格物品的叠放上限提升至 %s 倍",
+  "item.tbstackupgrades.tooltip.slot_limit": "原本一组 64 个的物品可叠放 %s 个",
+  "item.tbstackupgrades.tooltip.stacking": "可与其他堆叠升级叠加生效，同一等级也可重复安装",
+  "screen.tbstackupgrades.stack_upgrade": "堆叠升级",
+  "screen.tbstackupgrades.multiplier": "单格叠放：%s 倍",
+  "screen.tbstackupgrades.slot_limit": "单格上限：%s（以 64 为一组计算）",
+  "tooltip.tbstackupgrades.capacity": "数量：%s / %s",
+  "message.tbstackupgrades.cannot_remove_upgrade": "有物品堆叠超过 %s 个，无法取下该升级",
+  "screen.tbstackupgrades.current_limit": "当前背包单格上限：%s"
+}

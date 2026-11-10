@@ -1,0 +1,39 @@
+pluginManagement {
+    repositories {
+        // 国内镜像放在官方源之前（只覆盖 mavenCentral / gradlePluginPortal / google）
+        maven {
+            name = 'AliyunPublic'
+            url = 'https://maven.aliyun.com/repository/public'
+        }
+        maven {
+            name = 'AliyunGradlePlugin'
+            url = 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        gradlePluginPortal()
+        mavenCentral()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Fabric'
+                    url = uri('https://maven.fabricmc.net')
+                }
+            }
+            filter {
+                includeGroupAndSubgroups('net.fabricmc')
+            }
+        }
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+// One target of the 26.x line. The modules below live in the repository root and are shared
+// by every target; this file only points at them.
+rootProject.name = 'TravelersBackpack-StackUpgrades-26.3'
+includeBuild('../../build-logic')
+include 'common'
+include 'fabric'
+project(':common').projectDir = file('../../common')
+project(':fabric').projectDir = file('../../fabric')
