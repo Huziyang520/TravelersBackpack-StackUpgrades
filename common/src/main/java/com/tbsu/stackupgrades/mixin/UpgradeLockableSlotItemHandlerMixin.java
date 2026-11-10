@@ -54,7 +54,7 @@ public abstract class UpgradeLockableSlotItemHandlerMixin {
 
         int index = ((Slot) (Object) this).getContainerSlot();
         if (UpgradeRemovalGuard.blocksRemoval(self.menu.getWrapper(), index)) {
-            UpgradeRemovalGuard.notifyBlocked(player, UpgradeRemovalGuard.remainingLimit(self.menu.getWrapper(), index));
+            UpgradeRemovalGuard.notifyBlocked(player);
             cir.setReturnValue(false);
         }
     }

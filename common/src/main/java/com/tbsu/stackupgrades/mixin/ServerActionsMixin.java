@@ -39,7 +39,7 @@ public abstract class ServerActionsMixin {
 
         BackpackWrapper wrapper = menu.getWrapper();
         if (UpgradeRemovalGuard.blocksRemoval(wrapper, slot)) {
-            UpgradeRemovalGuard.notifyBlocked(player, UpgradeRemovalGuard.remainingLimit(wrapper, slot));
+            UpgradeRemovalGuard.notifyBlocked(player);
             ci.cancel();
         }
     }

@@ -63,12 +63,12 @@ public final class UpgradeRemovalGuard {
         return StackLimits.capacity(StackLimits.BASE_LIMIT, remaining);
     }
 
-    public static void notifyBlocked(Player player, int remainingLimit) {
+    public static void notifyBlocked(Player player) {
         if (player == null || player.level().isClientSide()) {
             return;
         }
         player.sendOverlayMessage(
-                Component.translatable("message.tbstackupgrades.cannot_remove_upgrade", remainingLimit)
+                Component.translatable("message.tbstackupgrades.cannot_remove_upgrade")
                         .withStyle(ChatFormatting.RED));
     }
 

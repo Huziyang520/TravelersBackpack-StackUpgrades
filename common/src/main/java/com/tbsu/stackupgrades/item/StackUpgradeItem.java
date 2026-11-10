@@ -39,13 +39,16 @@ public class StackUpgradeItem extends UpgradeItem {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay,
                                 Consumer<Component> consumer, TooltipFlag flag) {
-        super.appendHoverText(stack, context, tooltipDisplay, consumer, flag);
+        // The two numbers are what decides whether the item is worth a slot, so
+        // they go first and in the same blue the backpack uses for its own
+        // upgrade lines; the description the base class adds follows below.
         consumer.accept(Component.translatable("item.tbstackupgrades.tooltip.multiplier", format(this.tier.multiplier()))
-                .withStyle(ChatFormatting.GRAY));
+                .withStyle(ChatFormatting.BLUE));
         consumer.accept(Component.translatable("item.tbstackupgrades.tooltip.slot_limit", this.tier.capacityFor64())
-                .withStyle(ChatFormatting.GRAY));
+                .withStyle(ChatFormatting.BLUE));
         consumer.accept(Component.translatable("item.tbstackupgrades.tooltip.stacking")
                 .withStyle(ChatFormatting.DARK_GRAY));
+        super.appendHoverText(stack, context, tooltipDisplay, consumer, flag);
     }
 
     protected static String format(double multiplier) {

@@ -45,7 +45,7 @@ public abstract class BackpackBaseMenuMixin {
         }
 
         if (UpgradeRemovalGuard.blocksRemoval(self.getWrapper(), slot.index)) {
-            UpgradeRemovalGuard.notifyBlocked(player, UpgradeRemovalGuard.remainingLimit(self.getWrapper(), slot.index));
+            UpgradeRemovalGuard.notifyBlocked(player);
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }

@@ -10,8 +10,11 @@ package com.tbsu.stackupgrades.util;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
+import com.tiviacz.travelersbackpack.inventory.menu.slot.SlotItemHandler;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
 import com.tbsu.stackupgrades.upgrade.StackUpgrade;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -60,6 +63,28 @@ public final class StackLimits {
         long value = (long) Math.floor(itemMax * multiplier);
         value = Math.min(value, StackUpgradesConfig.maxSlotLimit);
         return (int) Math.max(1L, value);
+    }
+
+    /**
+     * True when the slot range [start, end) of the given menu holds at least one
+     * backpack storage slot whose capacity is above vanilla.
+     */
+    public static boolean hasUpgradedSlot(AbstractContainerMenu menu, int start, int end) {
+        int from = Math.max(0, start);
+        int to = Math.min(menu.slots.size(), end);
+        for (int i = from; i < to; i++) {
+            Slot slot = menu.slots.get(i);
+            if (!(slot instanceof SlotItemHandler handlerSlot)) {
+                continue;
+            }
+            if (handlerSlot.getItemHandler() instanceof StackLimitProvider provider) {
+                BackpackWrapper wrapper = provider.tbsu$getBackpackWrapper();
+                if (wrapper != null && multiplier(wrapper) > 1.0D) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

@@ -64,7 +64,21 @@ mod into the `mods/` folder. Both the client and the server need the mod.
 | `allowNonStackableItems` | `true` | Let items with a max stack size of 1 (tools, armor) use the multiplier |
 | `allowDuplicateStackUpgrades` | `true` | Allow installing the same tier more than once |
 | `maxSlotLimit` | `1073741824` | Hard cap for a single slot (64 - 1073741824) |
-| `configVersion` | `2` | Internal marker used for config migration; leave it alone |
+| `lootEnabled` | `true` | Put the upgrades into structure loot |
+| `lootChanceMultiplier` | `1.0` | Scales every loot chance (0 - 5) |
+| `lootTier4Chance` | `0.01` | Chance of the tier 4 upgrade in bastion treasure |
+| `configVersion` | `3` | Internal marker used for config migration; leave it alone |
+
+Loot follows the tier order: early structures drop the starter and tier 1, mid-game
+structures add tier 2, and tier 3 only appears in end-game structures. Tier 4 is
+limited to bastion treasure.
+
+Client options live in `config/tbstackupgrades-client.properties`:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `quickTransferStacking` | `true` | Shift-clicking into the backpack merges items whose max stack size is not 64 |
+| `sorterStacking` | `true` | The sort button merges stacks up to the upgraded capacity |
 
 ## Behaviour
 
@@ -168,7 +182,20 @@ LGPL-3.0. Both licence texts are in
 | `allowNonStackableItems` | `true` | 最大堆叠数为 1 的物品（工具、护甲）是否也吃倍率 |
 | `allowDuplicateStackUpgrades` | `true` | 同等级的堆叠升级是否允许重复安装 |
 | `maxSlotLimit` | `1073741824` | 单格上限硬顶（64–1073741824） |
-| `configVersion` | `2` | 配置迁移用的内部标记，不要手改 |
+| `lootEnabled` | `true` | 是否把升级放进结构战利品 |
+| `lootChanceMultiplier` | `1.0` | 所有战利品概率的倍率（0–5） |
+| `lootTier4Chance` | `0.01` | 堡垒遗迹出四级升级的概率 |
+| `configVersion` | `3` | 配置迁移用的内部标记，不要手改 |
+
+战利品按等级推进：早期结构只出入门与一级，中期结构加入二级，三级只在末期结构，
+四级仅限堡垒遗迹宝藏。
+
+客户端选项在 `config/tbstackupgrades-client.properties`：
+
+| 键 | 默认值 | 说明 |
+|---|---|---|
+| `quickTransferStacking` | `true` | Shift 快速转移时，最大堆叠数不是 64 的物品也会合并进背包 |
+| `sorterStacking` | `true` | 整理按钮按升级后的单格容量合并堆叠 |
 
 ## 行为说明
 

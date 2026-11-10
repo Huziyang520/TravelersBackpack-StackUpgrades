@@ -46,6 +46,13 @@ public final class StackUpgradesConfig {
     public static boolean allowDuplicateStackUpgrades = true;
     public static int maxSlotLimit = DEFAULT_MAX_SLOT_LIMIT;
 
+    /** Server side: inject the upgrades into vanilla structure loot. */
+    public static boolean lootEnabled = true;
+    /** Scales every loot chance; 1.0 keeps the defaults. */
+    public static double lootChanceMultiplier = 1.0D;
+    /** Chance of the tier 4 upgrade in bastion treasure. */
+    public static double lootTier4Chance = 0.01D;
+
     private StackUpgradesConfig() {
     }
 
@@ -89,10 +96,27 @@ public final class StackUpgradesConfig {
         }
         maxSlotLimit = Math.max(64, Math.min(maxSlotLimit, HARD_MAX_SLOT_LIMIT));
 
+        lootEnabled = Boolean.parseBoolean(properties.getProperty("lootEnabled", "true"));
+        try {
+            lootChanceMultiplier = Double.parseDouble(properties.getProperty("lootChanceMultiplier", "1.0"));
+        } catch (NumberFormatException e) {
+            lootChanceMultiplier = 1.0D;
+        }
+        lootChanceMultiplier = Math.max(0.0D, Math.min(lootChanceMultiplier, 5.0D));
+        try {
+            lootTier4Chance = Double.parseDouble(properties.getProperty("lootTier4Chance", "0.01"));
+        } catch (NumberFormatException e) {
+            lootTier4Chance = 0.01D;
+        }
+        lootTier4Chance = Math.max(0.0D, Math.min(lootTier4Chance, 1.0D));
+
         properties.setProperty("allowNonStackableItems", Boolean.toString(allowNonStackableItems));
         properties.setProperty("allowDuplicateStackUpgrades", Boolean.toString(allowDuplicateStackUpgrades));
         properties.setProperty("maxSlotLimit", Integer.toString(maxSlotLimit));
-        properties.setProperty("configVersion", "2");
+        properties.setProperty("lootEnabled", Boolean.toString(lootEnabled));
+        properties.setProperty("lootChanceMultiplier", Double.toString(lootChanceMultiplier));
+        properties.setProperty("lootTier4Chance", Double.toString(lootTier4Chance));
+        properties.setProperty("configVersion", "3");
 
         try {
             Files.createDirectories(path.getParent());
