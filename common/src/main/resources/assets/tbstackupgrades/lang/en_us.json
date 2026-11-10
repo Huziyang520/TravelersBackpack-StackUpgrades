@@ -11,6 +11,6 @@
   "screen.tbstackupgrades.multiplier": "Items per slot: x%s",
   "screen.tbstackupgrades.slot_limit": "Slot capacity: %s (for a 64 stack)",
   "tooltip.tbstackupgrades.capacity": "Amount: %s / %s",
-  "message.tbstackupgrades.cannot_remove_upgrade": "A slot holds more than %s items - cannot remove this upgrade",
+  "message.tbstackupgrades.cannot_remove_upgrade": "A slot holds more items than the %s per-slot limit that would remain - cannot remove this upgrade",
   "screen.tbstackupgrades.current_limit": "Current slot capacity: %s"
 }

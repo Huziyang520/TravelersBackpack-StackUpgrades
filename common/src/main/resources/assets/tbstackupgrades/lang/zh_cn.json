@@ -11,6 +11,6 @@
   "screen.tbstackupgrades.multiplier": "单格叠放：%s 倍",
   "screen.tbstackupgrades.slot_limit": "单格上限：%s（以 64 为一组计算）",
   "tooltip.tbstackupgrades.capacity": "数量：%s / %s",
-  "message.tbstackupgrades.cannot_remove_upgrade": "有物品堆叠超过 %s 个，无法取下该升级",
+  "message.tbstackupgrades.cannot_remove_upgrade": "背包内有物品超过取下后的单格上限（%s 个），无法取下该升级",
   "screen.tbstackupgrades.current_limit": "当前背包单格上限：%s"
 }

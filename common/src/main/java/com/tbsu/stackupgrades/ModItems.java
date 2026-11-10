@@ -35,7 +35,7 @@ public final class ModItems {
             ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
             // normal 64-per-stack item; the upgrade slot itself still accepts only one
             // (Traveler's Backpack reports a slot limit of 1 for its upgrade handler)
-            StackUpgradeItem item = new StackUpgradeItem(new Item.Properties().stacksTo(64).setId(key), tier);
+            StackUpgradeItem item = new StackUpgradeItem(new Item.Properties().stacksTo(64).rarity(tier.rarity()).setId(key), tier);
             Registry.register(BuiltInRegistries.ITEM, id, item);
             ALL.add(item);
             BY_TIER.put(tier, item);
