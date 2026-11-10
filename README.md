@@ -1,5 +1,7 @@
 # Traveler's Backpack: Stack Upgrades
 
+*Authors*: Poluo_0, Huziyang520
+
 An addon for [Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) (Fabric)
 that adds five stack upgrades to the backpack sidebar. Each installed upgrade multiplies how
 many items a single backpack slot can hold.
@@ -105,6 +107,8 @@ LGPL-3.0. Both licence texts are in
 ---
 
 # 旅行者背包：堆叠升级
+
+*作者*：Poluo_0、Huziyang520
 
 为 [旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)（Fabric）新增
 五种堆叠升级插件，放进背包侧栏后即可提升背包内单个格子的叠放上限。
