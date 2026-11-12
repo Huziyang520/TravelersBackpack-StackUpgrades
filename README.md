@@ -1,229 +1,209 @@
-# Traveler's Backpack: Stack Upgrades
-
-*Authors*: Poluo_0, Huziyang520
-
-An addon for [Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) (Fabric)
-that adds five stack upgrades to the backpack sidebar. Each installed upgrade multiplies how
-many items a single backpack slot can hold.
-
-## Upgrades
-
-| Upgrade | Multiplier | 64-stack items | 16-stack items | Non-stackable items |
-|---|---|---|---|---|
-| Starter | x1.5 | 96 | 24 | 1 (rounded down) |
-| Tier 1 | x2 | 128 | 32 | 2 |
-| Tier 2 | x4 | 256 | 64 | 4 |
-| Tier 3 | x8 | 512 | 128 | 8 |
-| Tier 4 | x16 | 1024 | 256 | 16 |
-
-Slot capacity is `floor(item max stack size x total multiplier)`, capped at 1,073,741,824.
-
-## How the multipliers combine
-
-- Every installed stack upgrade multiplies the slot capacity again — the multipliers are
-  **multiplicative, not additive**.
-- Different tiers stack with each other: all five tiers installed give x1536, so a 64-stack
-  item fits 98,304 per slot.
-- The same tier can be installed more than once; six tier-4 upgrades (every upgrade slot of a
-  netherite backpack) give 64 x 16^6 = **1,073,741,824 items per slot**.
-- Duplicates can be disabled in the config; the cap can be lowered as well.
-
-## Recipes
-
-All recipes use vanilla materials plus Traveler's Backpack's blank upgrade. `X` is the metal
-block of the tier, `S` is the previous upgrade (or the blank upgrade for tier 1).
-
-```
-Starter            Tier 1             Tier 1 (alt)
- C C C              I                X X X
- C B C            I S I              X S X
- C C C              I                X X X
-```
-
-| Result | Recipe |
-|---|---|
-| Starter | 8 copper blocks around 1 blank upgrade |
-| Tier 1 | 1 starter + 4 iron ingots, or 8 iron blocks around 1 blank upgrade |
-| Tier 2 | 8 gold blocks around 1 tier 1 |
-| Tier 3 | 8 diamond blocks around 1 tier 2 |
-| Tier 4 | 8 netherite blocks around 1 tier 3 |
-
-## Installation
-
-Install [Fabric Loader](https://fabricmc.net/use/) and
-[Fabric API](https://modrinth.com/mod/fabric-api), then drop
-[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) and this
-mod into the `mods/` folder. Both the client and the server need the mod.
-
-## Configuration
-
-The config screen is available from Mod Menu (it is provided by Forge Config API Port,
-which is optional: without it the mod runs on the defaults below). Settings live in
-`config/tbstackupgrades-common.toml`:
-
-| Key | Default | Meaning |
-|---|---|---|
-| `allowNonStackableItems` | `true` | Let items with a max stack size of 1 (tools, armor) use the multiplier |
-| `allowDuplicateStackUpgrades` | `true` | Allow installing the same tier more than once |
-| `maxSlotLimit` | `1073741824` | Hard cap for a single slot (64 - 1073741824) |
-| `lootEnabled` | `true` | Put the upgrades into structure loot |
-| `lootChanceMultiplier` | `1.0` | Scales every loot chance (0 - 5) |
-| `lootTier4Chance` | `0.01` | Chance of the tier 4 upgrade in bastion treasure |
-Loot follows the tier order: early structures drop the starter and tier 1, mid-game
-structures add tier 2, and tier 3 only appears in end-game structures. Tier 4 is
-limited to bastion treasure.
-
-Client options live in `config/tbstackupgrades-client.toml`:
-
-| Key | Default | Meaning |
-|---|---|---|
-| `quickTransferStacking` | `true` | Shift-clicking into the backpack merges items whose max stack size is not 64 |
-| `sorterStacking` | `true` | The sort button merges stacks up to the upgraded capacity |
-
-## Behaviour
-
-- Taking items out of the backpack is limited to one vanilla stack (64) at a time, so
-  oversized stacks never end up in a player inventory. Inserting is not limited.
-- The sort button keeps oversized stacks in place instead of splitting or merging them.
-- An upgrade cannot be removed while a stack in the backpack is larger than the capacity that
-  would remain after removing it; a red warning is drawn above the backpack screen instead.
-- Hovering an item inside the backpack shows `amount / capacity` in cyan while the capacity is
-  above 64.
-- The placed backpack block uses the same storage and behaves identically.
-- Items from other mods use their own max stack size as the base, so any stackable item is
-  affected.
-- Slot counts above three digits are scaled down so they stay inside the slot.
-
-## Licence
-
-Released under **LGPL-3.0-or-later OR MIT** (dual licence): the Mixin injection layer is
-`LGPL-3.0-or-later OR MIT`, everything else is MIT except the item textures, which are
-LGPL-3.0. Both licence texts are in
-[`LICENSE`](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/blob/main/LICENSE).
-
-- [Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) is
-  licensed [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html) and is a required dependency.
-  None of its code, textures, models or language files are copied or bundled; it is loaded
-  from the player's own installation, and its public API and Mixin targets are used at runtime.
-- [Fabric API](https://modrinth.com/mod/fabric-api) (Apache-2.0) is a required dependency and is
-  not bundled either.
-- Gameplay is inspired by [Sophisticated Backpacks](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks)'
-  stack upgrade (All Rights Reserved). No code, textures, models, sounds or language files from
-  it are used, and no affiliation is implied.
-- The upgrade-plate silhouette of the item textures is derived from Traveler's Backpack's
-  own upgrade icons (LGPL-3.0), so those textures are licensed LGPL-3.0; the stack glyph
-  and the mod icon are drawn for this mod.
-
-## Issues
-
-<https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues>
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?style=flat-square&logo=github)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades)
+[![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-brightgreen?style=flat-square&logo=github)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues)
+[![License](https://img.shields.io/badge/License-LGPL--3.0%20OR%20MIT-yellow.svg?style=flat-square)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades)
 
 ---
 
-# 旅行者背包：堆叠升级
+# 🎒 Traveler's Backpack: Stack Upgrades
+
+*Authors*: Poluo_0, Huziyang520
+
+An addon mod for **[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** (Fabric platform). This mod introduces **5 stack upgrade plugins** to the backpack's side panel, allowing you to multiply and boost item stack limits for individual slots inside the backpack.
+
+---
+
+## 📦 Upgrade Tiers & Capacity
+
+Slot capacity formula: `floor(item's base max stack size × total multiplier)`, with a default hard cap of `1,073,741,824`.
+
+| Upgrade Tier | Stack Multiplier | 64 items/stack | 16 items/stack | Non-stackable items (Tools/Armor) |
+| --- | --- | --- | --- | --- |
+| **Starter** | ×1.5 | 96 | 24 | 1 (rounded down) |
+| **Tier 1** | ×2 | 128 | 32 | 2 |
+| **Tier 2** | ×4 | 256 | 64 | 4 |
+| **Tier 3** | ×8 | 512 | 128 | 8 |
+| **Tier 4** | ×16 | 1024 | 256 | 16 |
+
+---
+
+## ⚡ Multiplier Stacking Rules
+
+- **Multiplicative Stacking**: Each additional stack upgrade of the same or different tiers multiplies the total factor further (**multiplicative rather than additive**).
+
+---
+
+## 🛠️ Crafting Recipes
+
+Recipes utilize vanilla materials and **[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** blank upgrades.
+
+- **`X`** represents the corresponding metal block of that tier.
+- **`S`** represents the previous tier upgrade (a blank upgrade can also be used for Tier 1).
+
+```text
+Starter             Tier 1              Tier 1 (Alternative)
+  C C C                 I                 X X X
+  C B C               I S I               X S X
+  C C C                 I                 X X X
+
+```
+
+| Output | Crafting Recipe |
+| --- | --- |
+| **Starter** | 8 Copper Blocks surrounding 1 Blank Upgrade |
+| **Tier 1** | 1 Starter + 4 Iron Ingots, or 8 Iron Blocks surrounding 1 Blank Upgrade |
+| **Tier 2** | 8 Gold Blocks surrounding 1 Tier 1 Upgrade |
+| **Tier 3** | 8 Diamond Blocks surrounding 1 Tier 2 Upgrade |
+| **Tier 4** | 8 Netherite Blocks surrounding 1 Tier 3 Upgrade |
+
+---
+
+## ⚙️ Configuration
+
+The configuration screen can be opened via the "Config" button in the Mod Menu (powered by Forge Config API Port; defaults are used if not installed).
+
+### Configuration File `config/tbstackupgrades-common.toml`:
+
+* `allowNonStackableItems = true` — Whether items with a maximum stack size of 1 (tools, armor) also benefit from the multiplier.
+* `allowDuplicateStackUpgrades = true` — Whether duplicate stack upgrades of the same tier are allowed to be installed simultaneously.
+* `maxSlotLimit = 1073741824` — Single slot limit hard cap (range 64–1073741824).
+* `lootEnabled = true` — Whether upgrades can be generated in structure loot tables.
+* `lootChanceMultiplier = 1.0` — Multiplier for all loot generation chances (range 0–5).
+* `lootTier4Chance = 0.01` — Chance of finding Tier 4 upgrades in Bastion Remnants.
+
+> **Loot Generation**: Loot progresses with game progression. Early structures drop Starter and Tier 1, mid-game structures add Tier 2, Tier 3 is restricted to late-game structures, and Tier 4 is exclusively found in Bastion Remnant chests.
+
+### Client Configuration `config/tbstackupgrades-client.toml`:
+
+* `quickTransferStacking = true` — When Shift-clicking, items with non-64 stack sizes will also merge into the backpack.
+* `sorterStacking = true` — The sorting button merges stacks based on upgraded single-slot capacities.
+
+---
+
+## 📌 Behavior Notes
+
+* **Extraction Limit**: When extracting from the backpack, a maximum of one vanilla stack (64 items) can be taken out per click; the remainder stays inside the slot. Players will not receive oversized stacks into their personal inventory. Insertion is not restricted.
+* **One-Click Sorting**: The sort button does not split or combine oversized stacks; they remain intact within their original slots.
+* **Removal Protection**: If the backpack contains stacks exceeding the capacity limit after removing an upgrade, clicking the side panel icon to remove the plugin will be blocked, and a red error prompt will appear at the top (or bottom if space is limited) of the backpack interface.
+* **Digital Display**: When hovering over items in the backpack, tooltips display a cyan `Count / Limit`, visible only when upgrades are installed and the limit exceeds 64. Slot counts exceeding 3 digits scale down proportionally to avoid overlapping adjacent slots.
+* **Placement Behavior**: When the backpack is placed on the ground and opened, it shares the exact same storage data and consistent behavior.
+* **Cross-Mod Compatibility**: Stackable items from other mods calculate limits based on their own max stack sizes and receive proportional enhancements.
+
+---
+
+## 📜 License
+
+This mod is dual-licensed under **LGPL-3.0-or-later OR MIT**:
+
+* Mixin Injection Layer: `LGPL-3.0-or-later OR MIT`
+* Remaining Code: `MIT`
+* Textures: `LGPL-3.0` (The plate outline textures are derived from the built-in upgrade icons of Traveler's Backpack; stack symbols and mod icons are custom-drawn for this mod).
+* **[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** is licensed under [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html) and serves as a required prerequisite. This mod does not copy or bundle any of its code, textures, models, or language files. It is installed separately by players at runtime and communicates purely through its public API and Mixin injection points.
+
+---
+
+## 🐛 Issue Tracker
+
+[https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues)
+
+---
+
+# 🎒 旅行者背包：堆叠升级
 
 *作者*：Poluo_0、Huziyang520
 
-为 [旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)（Fabric）新增
-五种堆叠升级插件，放进背包侧栏后即可提升背包内单个格子的叠放上限。
+为 **[旅行者背包 (Traveler's Backpack)](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)**（Fabric 平台）打造的附属模组。本模组在背包侧栏新增了 **5 种堆叠升级插件**，放入后即可按倍率提升背包内单个格子的物品堆叠上限。
 
-## 升级等级
+---
 
-| 升级 | 倍率 | 原本 64 个/组 | 原本 16 个/组 | 不可堆叠物品 |
-|---|---|---|---|---|
-| 入门 | ×1.5 | 96 | 24 | 1（向下取整） |
-| 一级 | ×2 | 128 | 32 | 2 |
-| 二级 | ×4 | 256 | 64 | 4 |
-| 三级 | ×8 | 512 | 128 | 8 |
-| 四级 | ×16 | 1024 | 256 | 16 |
+## 📦 升级等级与容量
 
-单格上限 = `floor(物品自身最大堆叠数 × 总倍率)`，硬顶 1,073,741,824。
+单格容量计算公式：`floor(物品自身最大堆叠数 × 总倍率)`，默认硬顶为 `1,073,741,824`。
 
-## 倍率叠加规则
+| 升级类型 | 堆叠倍率 | 64 个/组物品 | 16 个/组物品 | 不可堆叠物品（工具/装备） |
+| --- | --- | --- | --- | --- |
+| **入门 (Starter)** | ×1.5 | 96 | 24 | 1（向下取整） |
+| **一级 (Tier 1)** | ×2 | 128 | 32 | 2 |
+| **二级 (Tier 2)** | ×4 | 256 | 64 | 4 |
+| **三级 (Tier 3)** | ×8 | 512 | 128 | 8 |
+| **四级 (Tier 4)** | ×16 | 1024 | 256 | 16 |
 
-- 每装一个堆叠升级就再乘一次倍率，即**乘算**而非加算；
-- 不同等级之间同样相乘：五个等级全装 = ×1536，64 个/组的物品单格可放 98,304 个；
-- 同一等级也可以重复安装：六个四级插件（下界合金背包的全部升级槽）= 64 × 16⁶ =
-  单格 **1,073,741,824** 个；
-- 重复安装与上限都可以在配置里关掉或调低。
+---
 
-## 合成配方
+## ⚡ 倍率叠加规则
 
-全部只使用原版材料与旅行者背包的空白升级。`X` 为该等级的金属块，`S` 为上一级升级
-（一级也可用空白升级）。
+* **乘算叠加**：每多装一个堆叠升级就会再乘一次倍率（**乘算而非加算**）。
+
+---
+
+## 🛠️ 合成配方
+
+配方均使用原版材料与 **[旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** 的空白升级。
+
+* **`X`** 代表对应等级的金属块
+* **`S`** 代表上一级升级（一级也可用空白升级）
+
+```text
+入门                 一级                   一级（备用）
+  C C C                 I                 X X X
+  C B C               I S I               X S X
+  C C C                 I                 X X X
 
 ```
-入门               一级               一级（备用）
- C C C              I                X X X
- C B C            I S I              X S X
- C C C              I                X X X
-```
 
-| 产物 | 配方 |
-|---|---|
-| 入门 | 8 个铜块围 1 个空白升级 |
-| 一级 | 1 个入门 + 4 个铁锭，或 8 个铁块围 1 个空白升级 |
-| 二级 | 8 个金块围 1 个一级 |
-| 三级 | 8 个钻石块围 1 个二级 |
-| 四级 | 8 个下界合金块围 1 个三级 |
+| 产物 | 合成配方 |
+| --- | --- |
+| **入门** | 8 个铜块围 1 个空白升级 |
+| **一级** | 1 个入门 + 4 个铁锭，或 8 个铁块围 1 个空白升级 |
+| **二级** | 8 个金块围 1 个一级 |
+| **三级** | 8 个钻石块围 1 个二级 |
+| **四级** | 8 个下界合金块围 1 个三级 |
 
-## 安装
+---
 
-先装好 [Fabric Loader](https://fabricmc.net/use/) 与 [Fabric API](https://modrinth.com/mod/fabric-api)，
-再把 [旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) 与本 MOD
-一起放进 `mods/` 目录。客户端与服务端都要安装。
+## ⚙️ 配置
 
-## 配置
+模组列表（Mod Menu）里的“配置”按钮可打开配置界面（界面由 Forge Config API Port 提供，未安装时按默认值运行）。
 
-模组列表（Mod Menu）里的「配置」按钮可打开配置界面——界面由 Forge Config API Port 提供，
-该库为可选：未安装时本 MOD 按下面的默认值运行。配置文件为 `config/tbstackupgrades-common.toml`：
+### 配置文件 `config/tbstackupgrades-common.toml`：
 
-| 键 | 默认值 | 说明 |
-|---|---|---|
-| `allowNonStackableItems` | `true` | 最大堆叠数为 1 的物品（工具、护甲）是否也吃倍率 |
-| `allowDuplicateStackUpgrades` | `true` | 同等级的堆叠升级是否允许重复安装 |
-| `maxSlotLimit` | `1073741824` | 单格上限硬顶（64–1073741824） |
-| `lootEnabled` | `true` | 是否把升级放进结构战利品 |
-| `lootChanceMultiplier` | `1.0` | 所有战利品概率的倍率（0–5） |
-| `lootTier4Chance` | `0.01` | 堡垒遗迹出四级升级的概率 |
-战利品按等级推进：早期结构只出入门与一级，中期结构加入二级，三级只在末期结构，
-四级仅限堡垒遗迹宝藏。
+* `allowNonStackableItems = true` —— 最大堆叠数为 1 的物品（工具、护甲）是否也吃倍率。
+* `allowDuplicateStackUpgrades = true` —— 同等级的堆叠升级是否允许重复安装。
+* `maxSlotLimit = 1073741824` —— 单格上限硬顶（范围 64–1073741824）。
+* `lootEnabled = true` —— 是否把升级放进结构战利品。
+* `lootChanceMultiplier = 1.0` —— 所有战利品概率的倍率（范围 0–5）。
+* `lootTier4Chance = 0.01` —— 堡垒遗迹出四级升级的概率。
 
-客户端选项在 `config/tbstackupgrades-client.toml`：
+> **战利品生成**：战利品按游戏进程推进。早期结构出入门与一级，中期结构加入二级，三级只在末期结构，四级仅限堡垒遗迹宝箱。
 
-| 键 | 默认值 | 说明 |
-|---|---|---|
-| `quickTransferStacking` | `true` | Shift 快速转移时，最大堆叠数不是 64 的物品也会合并进背包 |
-| `sorterStacking` | `true` | 整理按钮按升级后的单格容量合并堆叠 |
+### 客户端配置 `config/tbstackupgrades-client.toml`：
 
-## 行为说明
+* `quickTransferStacking = true` —— Shift 快速转移时，最大堆叠数不是 64 的物品也会合并进背包。
+* `sorterStacking = true` —— 整理按钮按升级后的单格容量合并堆叠。
 
-- 从背包取出时每次最多取一个原版堆叠（64 个），剩余留在格子里，玩家背包里不会出现超量堆叠；
-  放入不受此限制。
-- 排序按钮不会拆分或合并超大堆叠，会保持整组待在原格子里。
-- 背包内若还有超过「拆下后上限」的堆叠，点击侧栏图标拆下插件会被拒绝，并在背包界面上方
-  （空间不足时下方）显示红字提示。
-- 悬停背包内物品时，提示里多出青色的 `数量 / 上限`，仅在装了升级且上限高于 64 时显示。
-- 背包放地上打开时共用同一套存储，行为一致。
-- 其它 MOD 的可堆叠物品按自身最大堆叠数计算，同样获得提升。
-- 单格数量超过 3 位时数字会等比缩小，不会盖住相邻格子。
+---
 
-## 许可证
+## 📌 行为说明
 
-本 MOD 采用 **LGPL-3.0-or-later OR MIT 双许可**：Mixin 注入层为
-`LGPL-3.0-or-later OR MIT`，其余代码为 MIT，贴图为 LGPL-3.0，两份协议全文见
-[`LICENSE`](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/blob/main/LICENSE)。
+* **取出限制**：从背包取出时每次最多取一个原版堆叠（64 个），剩余留在格子里，玩家背包里不会出现超量堆叠；放入不受此限制。
+* **一键整理**：排序按钮不会拆分或合并超大堆叠，会保持整组待在原格子里。
+* **拆卸保护**：背包内若还有超过“拆下后上限”的堆叠，点击侧栏图标拆下插件会被拒绝，并在背包界面上方（空间不足时下方）显示红字提示。
+* **数字显示**：悬停背包内物品时，提示里多出青色的 `数量 / 上限`，仅在装了升级且上限高于 64 时显示。单格数量超过 3 位时数字会等比缩小，不会盖住相邻格子。
+* **放置行为**：背包放地上打开时共用同一套存储，行为一致。
+* **跨模组兼容**：其它 MOD 的可堆叠物品按自身最大堆叠数计算，同样获得提升。
 
-- [旅行者背包](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack) 采用
-  [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html)，是必需前置；本 MOD **不复制、不打包**
-  它的任何代码、贴图、模型或语言文件，运行时由玩家自行安装，只通过其公开 API 与 Mixin 注入点协作。
-- [Fabric API](https://modrinth.com/mod/fabric-api)（Apache-2.0）同为必需前置，同样不打包。
-- 玩法灵感来自 [精妙背包](https://www.curseforge.com/minecraft/mc-mods/sophisticated-backpacks)
-  的堆叠升级（All Rights Reserved）；未使用其任何代码、贴图、模型、音效或语言文件，
-  也不暗示任何官方关联。
-- 贴图的板身轮廓取自旅行者背包自带的升级图标（LGPL-3.0），因此贴图按 LGPL-3.0 发布；
-  堆叠符号与模组图标为本 MOD 自绘。
+---
 
-## 问题反馈
+## 📜 许可证
 
-<https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues>
+本模组采用 **LGPL-3.0-or-later OR MIT** 双许可：
+
+* Mixin 注入层：`LGPL-3.0-or-later OR MIT`
+* 其余代码：`MIT`
+* 贴图：`LGPL-3.0`（贴图的板身轮廓取自旅行者背包自带的升级图标，堆叠符号与模组图标为本 MOD 自绘）
+* **[旅行者背包 (Traveler's Backpack)](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** 采用 [LGPL-3.0](https://www.gnu.org/licenses/lgpl-3.0.html)，是必需前置。本模组不复制、不打包其任何代码、贴图、模型或语言文件，运行时由玩家自行安装，只通过其公开 API 与 Mixin 注入点协作。
+
+---
+
+## 🐛 问题反馈
+
+[https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues)
