@@ -32,10 +32,19 @@ public final class ClickLimits {
         BUTTON.remove();
     }
 
-    /** Amount to take for the current click, capped for right clicks. */
-    public static int clampTake(int amount) {
+    /**
+     * Amount to take for the current click.
+     *
+     * <p>A right click asks for half of the stack, which on an oversized stack is
+     * far more than the player wants. Taking the whole stack is a left click and
+     * stays untouched, so only requests below the available amount are clamped.</p>
+     */
+    public static int clampPickup(int amount, int available) {
         Integer button = BUTTON.get();
         if (!StackUpgradesConfig.rightClickPickupLimit || button == null || button != 1) {
+            return amount;
+        }
+        if (amount >= available) {
             return amount;
         }
         return Math.min(amount, RIGHT_CLICK_PICKUP);

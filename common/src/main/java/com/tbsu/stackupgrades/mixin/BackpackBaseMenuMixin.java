@@ -126,13 +126,12 @@ public abstract class BackpackBaseMenuMixin {
 
         Slot slot = self.slots.get(index);
         ItemStack rest = slot.getItem();
-        if (rest.isEmpty()) {
-            slot.set(capped);
-        } else if (ItemStack.isSameItemSameComponents(rest, capped)) {
-            rest.grow(capped.getCount());
-            slot.setChanged();
-        } else if (slot.getItem().getCount() == 0) {
-            slot.set(original.copyWithCount(capped.getCount()));
-        }
+        int remaining = capped.getCount() + (rest.isEmpty() ? 0 : rest.getCount());
+        slot.set(original.copyWithCount(remaining));
+        slot.setChanged();
+
+        // The click handler repeats the transfer while the returned stack is not
+        // empty, so an empty result is what actually stops it after one stack.
+        cir.setReturnValue(ItemStack.EMPTY);
     }
 }

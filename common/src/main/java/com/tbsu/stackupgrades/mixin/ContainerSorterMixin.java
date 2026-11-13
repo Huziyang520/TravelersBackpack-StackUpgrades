@@ -18,9 +18,12 @@ package com.tbsu.stackupgrades.mixin;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.sorter.ContainerSorter;
 import com.tiviacz.travelersbackpack.inventory.sorter.SortSelector;
+import com.tbsu.stackupgrades.util.SlotLimitProvider;
+import com.tbsu.stackupgrades.util.StackLimitProvider;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.StackLimits;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -42,6 +45,61 @@ public class ContainerSorterMixin {
     /** Backpack being sorted on this thread; the merge helper has no other way in. */
     @Unique
     private static final ThreadLocal<BackpackWrapper> tbstackupgrades$sorting = new ThreadLocal<>();
+
+    /**
+     * The sort button only reorders stacks and never merges them, so the merge is
+     * done here first, through the open menu's slots: the storage handler type
+     * differs per loader and the menu slot is the only common handle.
+     */
+    @Inject(method = "sortBackpack", at = @At("HEAD"))
+    private static void tbstackupgrades$mergeBeforeSort(BackpackWrapper wrapper, Player player,
+                                                        SortSelector.SortType type, boolean sorting,
+                                                        CallbackInfo ci) {
+        if (!StackUpgradesConfig.sorterStacking || wrapper == null || player == null) {
+            return;
+        }
+
+        double multiplier = StackLimits.multiplier(wrapper);
+        if (multiplier <= 1.0D) {
+            return;
+        }
+
+        java.util.List<Slot> slots = new java.util.ArrayList<>();
+        for (Slot slot : player.containerMenu.slots) {
+            if (!(slot instanceof SlotLimitProvider slotProvider)) {
+                continue;
+            }
+            StackLimitProvider provider = slotProvider.tbsu$limitProvider();
+            if (provider != null && provider.tbsu$getBackpackWrapper() == wrapper) {
+                slots.add(slot);
+            }
+        }
+
+        for (int i = 0; i < slots.size(); i++) {
+            Slot target = slots.get(i);
+            ItemStack targetStack = target.getItem();
+            if (targetStack.isEmpty()) {
+                continue;
+            }
+
+            int capacity = StackLimits.capacity(targetStack, multiplier);
+            for (int j = i + 1; j < slots.size() && targetStack.getCount() < capacity; j++) {
+                Slot source = slots.get(j);
+                ItemStack sourceStack = source.getItem();
+                if (sourceStack.isEmpty() || !ItemStack.isSameItemSameComponents(targetStack, sourceStack)) {
+                    continue;
+                }
+
+                int moved = Math.min(capacity - targetStack.getCount(), sourceStack.getCount());
+                targetStack.grow(moved);
+                sourceStack.shrink(moved);
+                target.set(targetStack);
+                source.set(sourceStack);
+                target.setChanged();
+                source.setChanged();
+            }
+        }
+    }
 
     @Inject(method = "sortBackpack", at = @At("HEAD"))
     private static void tbstackupgrades$beginSort(BackpackWrapper wrapper, Player player,

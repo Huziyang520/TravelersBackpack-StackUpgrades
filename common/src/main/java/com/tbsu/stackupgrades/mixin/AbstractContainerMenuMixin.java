@@ -28,6 +28,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Optional;
+
 /**
  * Shift-click transfer only merges stacks when {@code ItemStack#isStackable()} is
  * true, which is decided by the item's own max stack size. Items whose max size
@@ -81,8 +83,8 @@ public abstract class AbstractContainerMenuMixin {
 
     @Redirect(method = "doClick",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/world/inventory/Slot;safeTake(IILnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack tbstackupgrades$clampTake(Slot slot, int slotId, int amount, Player player) {
-        return slot.safeTake(slotId, ClickLimits.clampTake(amount), player);
+                    target = "Lnet/minecraft/world/inventory/Slot;tryRemove(IILnet/minecraft/world/entity/player/Player;)Ljava/util/Optional;"))
+    private Optional<ItemStack> tbstackupgrades$clampPickup(Slot slot, int amount, int maxAmount, Player player) {
+        return slot.tryRemove(ClickLimits.clampPickup(amount, slot.getItem().getCount()), maxAmount, player);
     }
 }
