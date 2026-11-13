@@ -51,12 +51,14 @@ public abstract class AbstractContainerMenuMixin {
         tbstackupgrades$stackable.set(StackUpgradesConfig.quickTransferStacking
                 && !stack.isEmpty()
                 && StackLimits.hasUpgradedSlot((AbstractContainerMenu) (Object) this, startIndex, endIndex));
+        ClickLimits.beginMove(stack);
     }
 
     @Inject(method = "moveItemStackTo", at = @At("RETURN"))
     private void tbstackupgrades$clearRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                             CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.remove();
+        ClickLimits.endMove();
     }
 
     @Redirect(method = "moveItemStackTo",
@@ -65,20 +67,33 @@ public abstract class AbstractContainerMenuMixin {
         return stack.isStackable() || tbstackupgrades$stackable.get();
     }
 
-    /**
-     * Right-click picks up half of the stack; on an oversized stack that is far
-     * more than the player wants, so the taken amount is clamped.
-     */
+    /** Caps how much one shift click may move in total, see {@link ClickLimits#allowance}. */
+    @Redirect(method = "moveItemStackTo",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;getMaxStackSize(Lnet/minecraft/world/item/ItemStack;)I"))
+    private int tbstackupgrades$capTransfer(Slot slot, ItemStack stack) {
+        return ClickLimits.allowance(slot.getMaxStackSize(stack), stack);
+    }
+
     @Inject(method = "doClick", at = @At("HEAD"))
-    private void tbstackupgrades$rememberButton(int slotId, int button, ContainerInput input, Player player,
-                                                CallbackInfo ci) {
-        ClickLimits.setButton(button);
+    private void tbstackupgrades$beginClick(int slotId, int button, ContainerInput input, Player player,
+                                            CallbackInfo ci) {
+        int budget = 0;
+        if (input == ContainerInput.QUICK_MOVE && StackUpgradesConfig.shiftTransferLimit
+                && slotId >= 0 && slotId < this.slots.size()) {
+            ItemStack stack = this.slots.get(slotId).getItem();
+            int max = stack.getMaxStackSize();
+            if (!stack.isEmpty() && stack.getCount() > max) {
+                budget = max;
+            }
+        }
+        ClickLimits.beginClick(button, budget);
     }
 
     @Inject(method = "doClick", at = @At("RETURN"))
-    private void tbstackupgrades$forgetButton(int slotId, int button, ContainerInput input, Player player,
-                                              CallbackInfo ci) {
-        ClickLimits.clearButton();
+    private void tbstackupgrades$endClick(int slotId, int button, ContainerInput input, Player player,
+                                          CallbackInfo ci) {
+        ClickLimits.endClick();
     }
 
     @Redirect(method = "doClick",

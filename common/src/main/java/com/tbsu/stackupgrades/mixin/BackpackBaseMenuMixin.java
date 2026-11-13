@@ -17,6 +17,7 @@ package com.tbsu.stackupgrades.mixin;
 
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
+import com.tbsu.stackupgrades.util.ClickLimits;
 import com.tbsu.stackupgrades.util.StackLimits;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.UpgradeRemovalGuard;
@@ -58,12 +59,6 @@ public abstract class BackpackBaseMenuMixin {
     @Unique
     private static final ThreadLocal<Boolean> tbstackupgrades$stackable = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
-    /** Items left behind by the shift-click cap of the current transfer. */
-    @Unique
-    private static final ThreadLocal<ItemStack> tbstackupgrades$capped = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
-    @Unique
-    private static final ThreadLocal<ItemStack> tbstackupgrades$original = ThreadLocal.withInitial(() -> ItemStack.EMPTY);
-
     /**
      * Shift-click into the backpack merges items whose max stack size is not 64:
      * the menu copies {@code moveItemStackTo} from the base class, so the same
@@ -75,12 +70,14 @@ public abstract class BackpackBaseMenuMixin {
         tbstackupgrades$stackable.set(StackUpgradesConfig.quickTransferStacking
                 && !stack.isEmpty()
                 && StackLimits.hasUpgradedSlot((BackpackBaseMenu) (Object) this, startIndex, endIndex));
+        ClickLimits.beginMove(stack);
     }
 
     @Inject(method = "moveItemStackTo", at = @At("RETURN"))
     private void tbstackupgrades$clearRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                             CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.remove();
+        ClickLimits.endMove();
     }
 
     @Redirect(method = "moveItemStackTo",
@@ -89,49 +86,11 @@ public abstract class BackpackBaseMenuMixin {
         return stack.isStackable() || tbstackupgrades$stackable.get();
     }
 
-    /**
-     * Shift-click out of an oversized slot moves the whole stack by default,
-     * which floods the target inventory. With the option on, only the item's own
-     * max stack size is moved and the rest stays in the slot.
-     */
-    @Inject(method = "quickMoveStack", at = @At("HEAD"))
-    private void tbstackupgrades$capShiftTransfer(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
-        BackpackBaseMenu self = (BackpackBaseMenu) (Object) this;
-        if (!StackUpgradesConfig.shiftTransferLimit || index < 0 || index >= self.slots.size()) {
-            return;
-        }
-
-        Slot slot = self.slots.get(index);
-        ItemStack stack = slot.getItem();
-        int max = stack.getMaxStackSize();
-        if (stack.getCount() <= max) {
-            return;
-        }
-
-        tbstackupgrades$original.set(stack.copy());
-        tbstackupgrades$capped.set(stack.copyWithCount(stack.getCount() - max));
-        slot.set(stack.copyWithCount(max));
-    }
-
-    @Inject(method = "quickMoveStack", at = @At("RETURN"))
-    private void tbstackupgrades$restoreCapped(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
-        ItemStack capped = tbstackupgrades$capped.get();
-        ItemStack original = tbstackupgrades$original.get();
-        tbstackupgrades$capped.remove();
-        tbstackupgrades$original.remove();
-        BackpackBaseMenu self = (BackpackBaseMenu) (Object) this;
-        if (capped.isEmpty() || index < 0 || index >= self.slots.size()) {
-            return;
-        }
-
-        Slot slot = self.slots.get(index);
-        ItemStack rest = slot.getItem();
-        int remaining = capped.getCount() + (rest.isEmpty() ? 0 : rest.getCount());
-        slot.set(original.copyWithCount(remaining));
-        slot.setChanged();
-
-        // The click handler repeats the transfer while the returned stack is not
-        // empty, so an empty result is what actually stops it after one stack.
-        cir.setReturnValue(ItemStack.EMPTY);
+    /** Caps how much one shift click may move in total, see {@link ClickLimits#allowance}. */
+    @Redirect(method = "moveItemStackTo",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;getMaxStackSize(Lnet/minecraft/world/item/ItemStack;)I"))
+    private int tbstackupgrades$capTransfer(Slot slot, ItemStack stack) {
+        return ClickLimits.allowance(slot.getMaxStackSize(stack), stack);
     }
 }
