@@ -9,10 +9,13 @@
 
 package com.tbsu.stackupgrades.mixin;
 
+import com.tbsu.stackupgrades.util.ClickLimits;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.StackLimits;
 import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -22,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
@@ -57,5 +61,28 @@ public abstract class AbstractContainerMenuMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isStackable()Z"))
     private boolean tbstackupgrades$treatAsStackable(ItemStack stack) {
         return stack.isStackable() || tbstackupgrades$stackable.get();
+    }
+
+    /**
+     * Right-click picks up half of the stack; on an oversized stack that is far
+     * more than the player wants, so the taken amount is clamped.
+     */
+    @Inject(method = "doClick", at = @At("HEAD"))
+    private void tbstackupgrades$rememberButton(int slotId, int button, ContainerInput input, Player player,
+                                                CallbackInfo ci) {
+        ClickLimits.setButton(button);
+    }
+
+    @Inject(method = "doClick", at = @At("RETURN"))
+    private void tbstackupgrades$forgetButton(int slotId, int button, ContainerInput input, Player player,
+                                              CallbackInfo ci) {
+        ClickLimits.clearButton();
+    }
+
+    @Redirect(method = "doClick",
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;safeTake(IILnet/minecraft/world/entity/player/Player;)Lnet/minecraft/world/item/ItemStack;"))
+    private ItemStack tbstackupgrades$clampTake(Slot slot, int slotId, int amount, Player player) {
+        return slot.safeTake(slotId, ClickLimits.clampTake(amount), player);
     }
 }

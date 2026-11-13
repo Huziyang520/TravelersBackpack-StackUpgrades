@@ -27,6 +27,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
 
@@ -113,8 +114,44 @@ public class ContainerSorterMixin {
         }
         ci.cancel();
     }
+    /**
+     * Vanilla refuses to merge as soon as either stack is at its own max stack
+     * size, so a 16-max item never fills an upgraded slot. Merge while the target
+     * still has room up to the upgraded capacity instead.
+     */
+    @Inject(method = "canMergeItems", at = @At("HEAD"), cancellable = true)
+    private static void tbstackupgrades$mergeToCapacity(ItemStack target, ItemStack source,
+                                                        CallbackInfoReturnable<Boolean> cir) {
+        if (!StackUpgradesConfig.sorterStacking) {
+            return;
+        }
+        BackpackWrapper wrapper = tbstackupgrades$sorting.get();
+        if (wrapper == null) {
+            return;
+        }
+
+        double multiplier = StackLimits.multiplier(wrapper);
+        if (multiplier <= 1.0D) {
+            return;
+        }
+        if (target.isEmpty() || source.isEmpty() || !ItemStack.isSameItemSameComponents(target, source)) {
+            cir.setReturnValue(false);
+            return;
+        }
+
+        int capacity = StackLimits.capacity(target.getMaxStackSize(), multiplier);
+        cir.setReturnValue(target.getCount() < capacity);
+    }
+
+    /**
+     * Stacks above their vanilla limit are passed through untouched while the
+     * merge option is off, so sorting never redistributes them.
+     */
     @Inject(method = "addStackWithMerge", at = @At("HEAD"), cancellable = true)
     private static void tbstackupgrades$keepOversizedStacks(List<ItemStack> stacks, ItemStack newStack, CallbackInfo ci) {
+        if (StackUpgradesConfig.sorterStacking) {
+            return;
+        }
         if (!newStack.isEmpty() && newStack.getCount() > newStack.getMaxStackSize()) {
             stacks.add(newStack);
             ci.cancel();

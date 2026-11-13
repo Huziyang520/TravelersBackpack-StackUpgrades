@@ -50,5 +50,15 @@
   "tbstackupgrades.configuration.quickTransferStacking": "Shift-click merges large stacks",
   "tbstackupgrades.configuration.quickTransferStacking.tooltip": "Shift-clicking into the backpack merges items whose max stack size is not 64.",
   "tbstackupgrades.configuration.sorterStacking": "Sorter merges up to the upgraded capacity",
-  "tbstackupgrades.configuration.sorterStacking.tooltip": "The sort button merges stacks up to the upgraded capacity instead of the vanilla 64."
+  "tbstackupgrades.configuration.sorterStacking.tooltip": "The sort button merges stacks up to the upgraded capacity instead of the vanilla 64.",
+  "tbstackupgrades.configuration.section.tbstackupgrades.local.toml": "Stack Upgrades",
+  "tbstackupgrades.configuration.section.tbstackupgrades.local.toml.title": "Stack Upgrades",
+  "tbstackupgrades.configuration.controls.rightClickPickupLimit": "Right-click picks up at most 32",
+  "tbstackupgrades.configuration.controls.rightClickPickupLimit.tooltip": "Right-clicking an oversized stack in the backpack takes 32 items instead of half of it.",
+  "tbstackupgrades.configuration.rightClickPickupLimit": "Right-click picks up at most 32",
+  "tbstackupgrades.configuration.rightClickPickupLimit.tooltip": "Right-clicking an oversized stack in the backpack takes 32 items instead of half of it.",
+  "tbstackupgrades.configuration.controls.shiftTransferLimit": "Shift-click moves one stack",
+  "tbstackupgrades.configuration.controls.shiftTransferLimit.tooltip": "Shift-clicking a slot that holds more than a normal stack moves at most one normal stack and leaves the rest in place.",
+  "tbstackupgrades.configuration.shiftTransferLimit": "Shift-click moves one stack",
+  "tbstackupgrades.configuration.shiftTransferLimit.tooltip": "Shift-clicking a slot that holds more than a normal stack moves at most one normal stack and leaves the rest in place."
 }

@@ -50,5 +50,15 @@
   "tbstackupgrades.configuration.quickTransferStacking": "Shift 点击并入大堆",
   "tbstackupgrades.configuration.quickTransferStacking.tooltip": "Shift 点击放入背包时，最大堆叠不是 64 的物品也会合并。",
   "tbstackupgrades.configuration.sorterStacking": "整理按升级后容量合并",
-  "tbstackupgrades.configuration.sorterStacking.tooltip": "点整理时按升级后的容量合并，而不是原版 64。"
+  "tbstackupgrades.configuration.sorterStacking.tooltip": "点整理时按升级后的容量合并，而不是原版 64。",
+  "tbstackupgrades.configuration.section.tbstackupgrades.local.toml": "堆叠升级设置",
+  "tbstackupgrades.configuration.section.tbstackupgrades.local.toml.title": "堆叠升级设置",
+  "tbstackupgrades.configuration.controls.rightClickPickupLimit": "右键最多拿起 32 个",
+  "tbstackupgrades.configuration.controls.rightClickPickupLimit.tooltip": "在背包里右键超量堆叠时只拿起 32 个，而不是一半。",
+  "tbstackupgrades.configuration.rightClickPickupLimit": "右键最多拿起 32 个",
+  "tbstackupgrades.configuration.rightClickPickupLimit.tooltip": "在背包里右键超量堆叠时只拿起 32 个，而不是一半。",
+  "tbstackupgrades.configuration.controls.shiftTransferLimit": "Shift 点击只转移一组",
+  "tbstackupgrades.configuration.controls.shiftTransferLimit.tooltip": "Shift 点击超量堆叠时最多转移该物品的原版一组，剩下的留在原格。",
+  "tbstackupgrades.configuration.shiftTransferLimit": "Shift 点击只转移一组",
+  "tbstackupgrades.configuration.shiftTransferLimit.tooltip": "Shift 点击超量堆叠时最多转移该物品的原版一组，剩下的留在原格。"
 }

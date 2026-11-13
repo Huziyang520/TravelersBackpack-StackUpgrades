@@ -32,6 +32,8 @@ final class NeoForgeConfig {
     private static final ModConfigSpec.DoubleValue LOOT_TIER4_CHANCE;
     private static final ModConfigSpec.BooleanValue QUICK_TRANSFER_STACKING;
     private static final ModConfigSpec.BooleanValue SORTER_STACKING;
+    private static final ModConfigSpec.BooleanValue RIGHT_CLICK_PICKUP_LIMIT;
+    private static final ModConfigSpec.BooleanValue SHIFT_TRANSFER_LIMIT;
 
     private static final ModConfigSpec COMMON_SPEC;
 
@@ -68,6 +70,12 @@ final class NeoForgeConfig {
         SORTER_STACKING = COMMON
                 .comment("The sort button merges stacks up to the upgraded capacity.")
                 .define("sorterStacking", true);
+        RIGHT_CLICK_PICKUP_LIMIT = COMMON
+                .comment("Right-clicking an oversized stack takes 32 items instead of half of it.")
+                .define("rightClickPickupLimit", true);
+        SHIFT_TRANSFER_LIMIT = COMMON
+                .comment("Shift-clicking a slot that holds more than a normal stack moves one stack and leaves the rest.")
+                .define("shiftTransferLimit", true);
         COMMON.pop();
 
         COMMON_SPEC = COMMON.build();
@@ -77,9 +85,28 @@ final class NeoForgeConfig {
     }
 
     static void register(ModContainer container, IEventBus modBus) {
-        container.registerConfig(ModConfig.Type.COMMON, COMMON_SPEC);
+        registerCommon(container);
         modBus.addListener(ModConfigEvent.Loading.class, NeoForgeConfig::apply);
         modBus.addListener(ModConfigEvent.Reloading.class, NeoForgeConfig::apply);
+    }
+
+    /**
+     * FML 12 renamed the per-instance config type from COMMON to LOCAL, and a
+     * direct reference to either constant throws NoSuchFieldError on the other
+     * one. Resolve it by name instead.
+     */
+    private static void registerCommon(ModContainer container) {
+        ModConfig.Type fallback = ModConfig.Type.CLIENT;
+        for (ModConfig.Type type : ModConfig.Type.values()) {
+            if (type.name().equals("LOCAL")) {
+                container.registerConfig(type, COMMON_SPEC);
+                return;
+            }
+            if (type.name().equals("COMMON")) {
+                fallback = type;
+            }
+        }
+        container.registerConfig(fallback, COMMON_SPEC);
     }
 
     private static void apply(ModConfigEvent event) {
@@ -94,5 +121,7 @@ final class NeoForgeConfig {
         StackUpgradesConfig.lootTier4Chance = LOOT_TIER4_CHANCE.get();
         StackUpgradesConfig.quickTransferStacking = QUICK_TRANSFER_STACKING.get();
         StackUpgradesConfig.sorterStacking = SORTER_STACKING.get();
+        StackUpgradesConfig.rightClickPickupLimit = RIGHT_CLICK_PICKUP_LIMIT.get();
+        StackUpgradesConfig.shiftTransferLimit = SHIFT_TRANSFER_LIMIT.get();
     }
 }

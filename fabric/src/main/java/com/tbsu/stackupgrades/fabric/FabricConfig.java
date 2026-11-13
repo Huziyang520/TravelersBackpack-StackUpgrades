@@ -35,6 +35,8 @@ final class FabricConfig {
     private static final ModConfigSpec.DoubleValue LOOT_TIER4_CHANCE;
     private static final ModConfigSpec.BooleanValue QUICK_TRANSFER_STACKING;
     private static final ModConfigSpec.BooleanValue SORTER_STACKING;
+    private static final ModConfigSpec.BooleanValue RIGHT_CLICK_PICKUP_LIMIT;
+    private static final ModConfigSpec.BooleanValue SHIFT_TRANSFER_LIMIT;
 
     private static final ModConfigSpec COMMON_SPEC;
 
@@ -71,6 +73,12 @@ final class FabricConfig {
         SORTER_STACKING = COMMON
                 .comment("The sort button merges stacks up to the upgraded capacity.")
                 .define("sorterStacking", true);
+        RIGHT_CLICK_PICKUP_LIMIT = COMMON
+                .comment("Right-clicking an oversized stack takes 32 items instead of half of it.")
+                .define("rightClickPickupLimit", true);
+        SHIFT_TRANSFER_LIMIT = COMMON
+                .comment("Shift-clicking a slot that holds more than a normal stack moves one stack and leaves the rest.")
+                .define("shiftTransferLimit", true);
         COMMON.pop();
 
         COMMON_SPEC = COMMON.build();
@@ -97,5 +105,7 @@ final class FabricConfig {
         StackUpgradesConfig.lootTier4Chance = LOOT_TIER4_CHANCE.get();
         StackUpgradesConfig.quickTransferStacking = QUICK_TRANSFER_STACKING.get();
         StackUpgradesConfig.sorterStacking = SORTER_STACKING.get();
+        StackUpgradesConfig.rightClickPickupLimit = RIGHT_CLICK_PICKUP_LIMIT.get();
+        StackUpgradesConfig.shiftTransferLimit = SHIFT_TRANSFER_LIMIT.get();
     }
 }

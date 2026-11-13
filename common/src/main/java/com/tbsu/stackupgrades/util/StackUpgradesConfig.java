@@ -42,6 +42,17 @@ public final class StackUpgradesConfig {
     /** The sort button merges up to the upgraded capacity. */
     public static boolean sorterStacking = true;
 
+    /**
+     * Right-click picks up at most {@link ClickLimits#RIGHT_CLICK_PICKUP} items
+     * instead of half of an oversized stack.
+     */
+    public static boolean rightClickPickupLimit = true;
+    /**
+     * Shift-click moves at most the item's own max stack size out of a slot that
+     * holds more than that.
+     */
+    public static boolean shiftTransferLimit = true;
+
     private StackUpgradesConfig() {
     }
 }
