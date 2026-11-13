@@ -72,6 +72,9 @@ processResources {
             'minecraft_version_slug'       : minecraft_version_slug,
             'minecraft_version_range'      : minecraft_version_range,
             'minecraft_version_range_fabric': minecraft_version_range_fabric,
+            'neoforge_version'             : neoforge_version,
+            'neoforge_version_range'       : neoforge_version_range,
+            'travelersbackpack_version'    : travelersbackpack_version,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,
             'mod_name'                     : mod_name,
@@ -83,11 +86,18 @@ processResources {
     ]
 
     var jsonExpandProps = expandProps.collectEntries {
-        key, value -> [(key): value instanceof String ? value.replace('\n', '\\\\n') : value]
+        // A real newline is illegal inside a JSON string, so it has to be written as
+        // the two-character escape. TOML takes the real newline (see below).
+        key, value -> [(key): value instanceof String ? value.replace('\n', '\\n') : value]
     }
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', '*.mixins.json']) {
         expand jsonExpandProps
+    }
+
+    // TOML keeps real newlines: the description is a multi-line literal string.
+    filesMatching(['META-INF/neoforge.mods.toml']) {
+        expand expandProps
     }
 
     inputs.properties(expandProps)

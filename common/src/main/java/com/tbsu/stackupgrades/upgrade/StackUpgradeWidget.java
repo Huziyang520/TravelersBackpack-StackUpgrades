@@ -13,8 +13,6 @@ import com.tiviacz.travelersbackpack.client.screens.widgets.UpgradeWidgetBase;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
 import com.tbsu.stackupgrades.util.StackLimits;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
@@ -24,8 +22,10 @@ import java.util.function.Consumer;
  * Sidebar widget for a stack upgrade. Stack upgrades have no tab of their own,
  * so this widget only provides a tooltip for the icon inside the upgrade slot
  * (clicking it removes the upgrade, which is handled by the base class).
+ *
+ * <p>Client only: instantiated from {@code StackUpgrade#createWidget}, which the
+ * backpack screen calls on the client.</p>
  */
-@Environment(EnvType.CLIENT)
 public class StackUpgradeWidget extends UpgradeWidgetBase<StackUpgrade> {
     public StackUpgradeWidget(BackpackScreen screen, StackUpgrade upgrade, Point pos) {
         super(screen, upgrade, pos, new Point(0, 0), "screen.tbstackupgrades.stack_upgrade");

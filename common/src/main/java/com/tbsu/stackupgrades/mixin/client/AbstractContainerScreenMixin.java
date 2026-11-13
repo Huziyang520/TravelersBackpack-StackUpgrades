@@ -16,10 +16,9 @@
 package com.tbsu.stackupgrades.mixin.client;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
-import com.tiviacz.travelersbackpack.inventory.handler.ItemStackHandler;
-import com.tiviacz.travelersbackpack.inventory.menu.slot.SlotItemHandler;
 import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
 import com.tbsu.stackupgrades.client.StackUpgradeWarning;
+import com.tbsu.stackupgrades.util.SlotLimitProvider;
 import com.tbsu.stackupgrades.util.StackLimitProvider;
 import com.tbsu.stackupgrades.util.StackLimits;
 import com.tbsu.stackupgrades.util.UpgradeRemovalGuard;
@@ -57,12 +56,12 @@ public abstract class AbstractContainerScreenMixin {
     @Inject(method = "getTooltipFromContainerItem", at = @At("RETURN"), cancellable = true)
     private void tbstackupgrades$addCapacityLine(ItemStack stack, CallbackInfoReturnable<List<Component>> cir) {
         Slot slot = this.hoveredSlot;
-        if (slot == null || stack.isEmpty() || !(slot instanceof SlotItemHandler slotItemHandler)) {
+        if (slot == null || stack.isEmpty() || !(slot instanceof SlotLimitProvider slotProvider)) {
             return;
         }
 
-        ItemStackHandler handler = slotItemHandler.getItemHandler();
-        if (!(handler instanceof StackLimitProvider provider)) {
+        StackLimitProvider provider = slotProvider.tbsu$limitProvider();
+        if (provider == null) {
             return;
         }
 

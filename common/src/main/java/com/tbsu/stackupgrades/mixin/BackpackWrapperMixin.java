@@ -16,7 +16,6 @@
 package com.tbsu.stackupgrades.mixin;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
-import com.tiviacz.travelersbackpack.inventory.handler.ItemStackHandler;
 import com.tbsu.stackupgrades.util.StackLimitProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +31,7 @@ public abstract class BackpackWrapperMixin {
     @Inject(method = "loadStorage", at = @At("RETURN"))
     private void tbstackupgrades$bindStorageHandler(CallbackInfo ci) {
         BackpackWrapper wrapper = (BackpackWrapper) (Object) this;
-        ItemStackHandler storage = wrapper.getStorage();
+        Object storage = wrapper.getStorage();
         if (storage instanceof StackLimitProvider provider) {
             provider.tbsu$setBackpackWrapper(wrapper);
         }

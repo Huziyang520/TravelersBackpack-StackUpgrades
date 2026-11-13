@@ -10,7 +10,6 @@ package com.tbsu.stackupgrades.util;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
-import com.tiviacz.travelersbackpack.inventory.handler.ItemStackHandler;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
 import com.tbsu.stackupgrades.upgrade.StackUpgrade;
 import net.minecraft.ChatFormatting;
@@ -39,14 +38,14 @@ public final class UpgradeRemovalGuard {
             return false;
         }
 
-        ItemStackHandler storage = wrapper.getStorage();
-        if (storage == null) {
+        Object storage = wrapper.getStorage();
+        if (!(storage instanceof StackLimitProvider provider)) {
             return false;
         }
 
         double remaining = StackLimits.multiplier(wrapper) / target.getMultiplier();
-        for (int i = 0; i < storage.getSlots(); i++) {
-            ItemStack stack = storage.getStackInSlot(i);
+        for (int i = 0; i < provider.tbsu$size(); i++) {
+            ItemStack stack = provider.tbsu$stack(i);
             if (!stack.isEmpty() && stack.getCount() > StackLimits.capacity(stack, remaining)) {
                 return true;
             }

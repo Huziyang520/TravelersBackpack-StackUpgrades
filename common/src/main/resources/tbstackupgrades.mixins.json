@@ -9,10 +9,8 @@
     "BackpackWrapperMixin",
     "ContainerSorterMixin",
     "DataComponentTypeSimpleTypeMixin",
-    "ItemStackHandlerMixin",
     "ItemStackTemplateMixin",
     "ServerActionsMixin",
-    "SlotItemHandlerMixin",
     "UpgradeLockableSlotItemHandlerMixin",
     "UpgradeManagerMixin"
   ],

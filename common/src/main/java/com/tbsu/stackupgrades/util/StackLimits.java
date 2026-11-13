@@ -10,7 +10,6 @@ package com.tbsu.stackupgrades.util;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
-import com.tiviacz.travelersbackpack.inventory.menu.slot.SlotItemHandler;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
 import com.tbsu.stackupgrades.upgrade.StackUpgrade;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -74,14 +73,16 @@ public final class StackLimits {
         int to = Math.min(menu.slots.size(), end);
         for (int i = from; i < to; i++) {
             Slot slot = menu.slots.get(i);
-            if (!(slot instanceof SlotItemHandler handlerSlot)) {
+            if (!(slot instanceof SlotLimitProvider slotProvider)) {
                 continue;
             }
-            if (handlerSlot.getItemHandler() instanceof StackLimitProvider provider) {
-                BackpackWrapper wrapper = provider.tbsu$getBackpackWrapper();
-                if (wrapper != null && multiplier(wrapper) > 1.0D) {
-                    return true;
-                }
+            StackLimitProvider provider = slotProvider.tbsu$limitProvider();
+            if (provider == null) {
+                continue;
+            }
+            BackpackWrapper wrapper = provider.tbsu$getBackpackWrapper();
+            if (wrapper != null && multiplier(wrapper) > 1.0D) {
+                return true;
             }
         }
         return false;

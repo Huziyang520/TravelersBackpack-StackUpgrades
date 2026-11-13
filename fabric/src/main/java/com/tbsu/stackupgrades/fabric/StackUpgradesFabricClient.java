@@ -6,7 +6,7 @@
  * 注意：mixin/ 目录下的注入层类采用 LGPL-3.0-or-later OR MIT 双许可。
  */
 
-package com.tbsu.stackupgrades.client;
+package com.tbsu.stackupgrades.fabric;
 
 import com.tbsu.stackupgrades.StackUpgrades;
 import fuzs.forgeconfigapiport.fabric.api.v5.client.ConfigScreenFactoryRegistry;
@@ -18,11 +18,11 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
  * Adds the config button to Mod Menu. Both Mod Menu and Forge Config API Port
  * are optional, so the screen is only wired up when both are installed.
  */
-public final class StackUpgradesClient implements ClientModInitializer {
+public final class StackUpgradesFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         if (!FabricLoader.getInstance().isModLoaded("modmenu")
-                || !FabricLoader.getInstance().isModLoaded("forgeconfigapiport")) {
+                || !FabricLoader.getInstance().isModLoaded(FabricConfig.FORGE_CONFIG_API_PORT)) {
             return;
         }
         ConfigScreenFactoryRegistry.INSTANCE.register(StackUpgrades.MOD_ID,

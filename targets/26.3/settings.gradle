@@ -35,5 +35,7 @@ rootProject.name = 'TravelersBackpack-StackUpgrades-26.3'
 includeBuild('../../build-logic')
 include 'common'
 include 'fabric'
+include 'neoforge'
 project(':common').projectDir = file('../../common')
 project(':fabric').projectDir = file('../../fabric')
+project(':neoforge').projectDir = file('../../neoforge')

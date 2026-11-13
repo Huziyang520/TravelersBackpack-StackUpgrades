@@ -9,6 +9,7 @@
 package com.tbsu.stackupgrades.util;
 
 import com.tiviacz.travelersbackpack.init.ModDataComponents;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 
 /**
@@ -28,7 +29,16 @@ public final class ModComponents {
     public static boolean isBackpackContainer(Object type) {
         if (backpackContainer == null && !failed) {
             try {
-                backpackContainer = ModDataComponents.BACKPACK_CONTAINER;
+                // NeoForge exposes the component as a registry holder, Fabric as the type
+                // itself, so resolve both shapes without referencing a loader class here.
+                Object component = ModDataComponents.BACKPACK_CONTAINER;
+                if (component instanceof Holder<?> holder) {
+                    backpackContainer = (DataComponentType<?>) holder.value();
+                } else if (component instanceof DataComponentType<?> componentType) {
+                    backpackContainer = componentType;
+                } else {
+                    failed = true;
+                }
             } catch (Throwable throwable) {
                 failed = true;
             }

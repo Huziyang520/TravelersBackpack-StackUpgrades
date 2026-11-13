@@ -10,10 +10,7 @@ package com.tbsu.stackupgrades;
 
 import com.tbsu.stackupgrades.item.StackUpgradeItem;
 import com.tbsu.stackupgrades.upgrade.StackTier;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 
@@ -22,6 +19,10 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The five upgrade items. Instances are built and remembered here; putting them
+ * into the item registry is loader specific and happens in the loader modules.
+ */
 public final class ModItems {
     public static final List<StackUpgradeItem> ALL = new ArrayList<>();
     private static final Map<StackTier, StackUpgradeItem> BY_TIER = new EnumMap<>(StackTier.class);
@@ -29,17 +30,20 @@ public final class ModItems {
     private ModItems() {
     }
 
-    public static void register() {
-        for (StackTier tier : StackTier.values()) {
-            Identifier id = StackUpgrades.id(tier.itemName());
-            ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, id);
-            // normal 64-per-stack item; the upgrade slot itself still accepts only one
-            // (Traveler's Backpack reports a slot limit of 1 for its upgrade handler)
-            StackUpgradeItem item = new StackUpgradeItem(new Item.Properties().stacksTo(64).rarity(tier.rarity()).setId(key), tier);
-            Registry.register(BuiltInRegistries.ITEM, id, item);
-            ALL.add(item);
-            BY_TIER.put(tier, item);
-        }
+    /**
+     * Builds the item of a tier. The id has to be set on the properties as well:
+     * the game refuses a registered item whose stack id does not match its key.
+     */
+    public static StackUpgradeItem create(StackTier tier) {
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, StackUpgrades.id(tier.itemName()));
+        // normal 64-per-stack item; the upgrade slot itself still accepts only one
+        // (Traveler's Backpack reports a slot limit of 1 for its upgrade handler)
+        return new StackUpgradeItem(new Item.Properties().stacksTo(64).rarity(tier.rarity()).setId(key), tier);
+    }
+
+    public static void remember(StackUpgradeItem item) {
+        ALL.add(item);
+        BY_TIER.put(item.getTier(), item);
     }
 
     public static StackUpgradeItem get(StackTier tier) {

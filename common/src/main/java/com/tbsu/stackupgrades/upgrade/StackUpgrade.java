@@ -16,8 +16,6 @@ import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
@@ -48,8 +46,11 @@ public class StackUpgrade extends UpgradeBase<StackUpgrade> {
         return false;
     }
 
-    @Override
-    @Environment(EnvType.CLIENT)
+    /**
+     * Sidebar icon. Only Fabric's client screen interface declares this method,
+     * so it is not annotated as an override: on NeoForge it is simply never
+     * called and the upgrade works without its own icon.
+     */
     public WidgetBase<?> createWidget(BackpackScreen screen, int x, int y) {
         return new StackUpgradeWidget(screen, this, new Point(screen.getGuiLeft() + x, screen.getGuiTop() + y));
     }

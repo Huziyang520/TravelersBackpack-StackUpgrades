@@ -6,26 +6,26 @@
  * 注意：mixin/ 目录下的注入层类采用 LGPL-3.0-or-later OR MIT 双许可。
  */
 
-package com.tbsu.stackupgrades.util;
+package com.tbsu.stackupgrades.fabric;
 
 import com.tbsu.stackupgrades.StackUpgrades;
+import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import fuzs.forgeconfigapiport.fabric.api.v5.ConfigRegistry;
 import fuzs.forgeconfigapiport.fabric.api.v5.ModConfigEvents;
-import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 /**
- * Builds the TOML config and keeps {@link StackUpgradesConfig} in sync with it.
+ * TOML config on Fabric, provided by Forge Config API Port.
  *
- * <p>This class is only loaded when Forge Config API Port is installed, so the
- * mod keeps working (with default values) on a setup without it.</p>
+ * <p>Only loaded when that library is installed, so it stays optional and the
+ * field defaults are used otherwise. Every key is read back into
+ * {@link StackUpgradesConfig} on load and reload.</p>
  */
-final class ConfigSpecBootstrap {
-    private static final ModConfigSpec.Builder COMMON = new ModConfigSpec.Builder();
-    private static final ModConfigSpec.Builder CLIENT = new ModConfigSpec.Builder();
+final class FabricConfig {
+    static final String FORGE_CONFIG_API_PORT = "forgeconfigapiport";
 
-    static final ModConfigSpec COMMON_SPEC;
-    static final ModConfigSpec CLIENT_SPEC;
+    private static final ModConfigSpec.Builder COMMON = new ModConfigSpec.Builder();
 
     private static final ModConfigSpec.BooleanValue ALLOW_NON_STACKABLE;
     private static final ModConfigSpec.BooleanValue ALLOW_DUPLICATES;
@@ -35,6 +35,8 @@ final class ConfigSpecBootstrap {
     private static final ModConfigSpec.DoubleValue LOOT_TIER4_CHANCE;
     private static final ModConfigSpec.BooleanValue QUICK_TRANSFER_STACKING;
     private static final ModConfigSpec.BooleanValue SORTER_STACKING;
+
+    private static final ModConfigSpec COMMON_SPEC;
 
     static {
         COMMON.push("limits");
@@ -62,45 +64,38 @@ final class ConfigSpecBootstrap {
                 .defineInRange("lootTier4Chance", 0.01D, 0.0D, 1.0D);
         COMMON.pop();
 
-        CLIENT.push("controls");
-        QUICK_TRANSFER_STACKING = CLIENT
+        COMMON.push("controls");
+        QUICK_TRANSFER_STACKING = COMMON
                 .comment("Shift-clicking into the backpack merges items whose max stack size is not 64.")
                 .define("quickTransferStacking", true);
-        SORTER_STACKING = CLIENT
+        SORTER_STACKING = COMMON
                 .comment("The sort button merges stacks up to the upgraded capacity.")
                 .define("sorterStacking", true);
-        CLIENT.pop();
+        COMMON.pop();
 
         COMMON_SPEC = COMMON.build();
-        CLIENT_SPEC = CLIENT.build();
     }
 
-    private ConfigSpecBootstrap() {
+    private FabricConfig() {
     }
 
     static void register() {
         ConfigRegistry.INSTANCE.register(StackUpgrades.MOD_ID, ModConfig.Type.COMMON, COMMON_SPEC);
-        ConfigRegistry.INSTANCE.register(StackUpgrades.MOD_ID, ModConfig.Type.CLIENT, CLIENT_SPEC);
-        ModConfigEvents.loading(StackUpgrades.MOD_ID).register(ConfigSpecBootstrap::apply);
-        ModConfigEvents.reloading(StackUpgrades.MOD_ID).register(ConfigSpecBootstrap::apply);
+        ModConfigEvents.loading(StackUpgrades.MOD_ID).register(FabricConfig::apply);
+        ModConfigEvents.reloading(StackUpgrades.MOD_ID).register(FabricConfig::apply);
     }
 
     private static void apply(ModConfig config) {
-        switch (config.getType()) {
-            case COMMON, SERVER -> {
-                StackUpgradesConfig.allowNonStackableItems = ALLOW_NON_STACKABLE.get();
-                StackUpgradesConfig.allowDuplicateStackUpgrades = ALLOW_DUPLICATES.get();
-                StackUpgradesConfig.maxSlotLimit = MAX_SLOT_LIMIT.get();
-                StackUpgradesConfig.lootEnabled = LOOT_ENABLED.get();
-                StackUpgradesConfig.lootChanceMultiplier = LOOT_CHANCE_MULTIPLIER.get();
-                StackUpgradesConfig.lootTier4Chance = LOOT_TIER4_CHANCE.get();
-            }
-            case CLIENT -> {
-                StackUpgradesConfig.quickTransferStacking = QUICK_TRANSFER_STACKING.get();
-                StackUpgradesConfig.sorterStacking = SORTER_STACKING.get();
-            }
-            default -> {
-            }
+        if (config.getType() != ModConfig.Type.COMMON && config.getType() != ModConfig.Type.SERVER) {
+            return;
         }
+        StackUpgradesConfig.allowNonStackableItems = ALLOW_NON_STACKABLE.get();
+        StackUpgradesConfig.allowDuplicateStackUpgrades = ALLOW_DUPLICATES.get();
+        StackUpgradesConfig.maxSlotLimit = MAX_SLOT_LIMIT.get();
+        StackUpgradesConfig.lootEnabled = LOOT_ENABLED.get();
+        StackUpgradesConfig.lootChanceMultiplier = LOOT_CHANCE_MULTIPLIER.get();
+        StackUpgradesConfig.lootTier4Chance = LOOT_TIER4_CHANCE.get();
+        StackUpgradesConfig.quickTransferStacking = QUICK_TRANSFER_STACKING.get();
+        StackUpgradesConfig.sorterStacking = SORTER_STACKING.get();
     }
 }

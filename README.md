@@ -8,7 +8,7 @@
 
 *Authors*: Poluo_0, Huziyang520
 
-An addon mod for **[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** (Fabric platform). This mod introduces **5 stack upgrade plugins** to the backpack's side panel, allowing you to multiply and boost item stack limits for individual slots inside the backpack.
+An addon mod for **[Traveler's Backpack](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)** (Fabric and NeoForge). This mod introduces **5 stack upgrade plugins** to the backpack's side panel, allowing you to multiply and boost item stack limits for individual slots inside the backpack.
 
 ---
 
@@ -59,7 +59,7 @@ Starter             Tier 1              Tier 1 (Alternative)
 
 ## ⚙️ Configuration
 
-The configuration screen can be opened via the "Config" button in the Mod Menu (powered by Forge Config API Port; defaults are used if not installed).
+The configuration screen can be opened via the "Config" button of the mod list. On Fabric it needs Mod Menu and Forge Config API Port installed; without them the defaults are used.
 
 ### Configuration File `config/tbstackupgrades-common.toml`:
 
@@ -111,7 +111,7 @@ This mod is dual-licensed under **LGPL-3.0-or-later OR MIT**:
 
 *作者*：Poluo_0、Huziyang520
 
-为 **[旅行者背包 (Traveler's Backpack)](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)**（Fabric 平台）打造的附属模组。本模组在背包侧栏新增了 **5 种堆叠升级插件**，放入后即可按倍率提升背包内单个格子的物品堆叠上限。
+为 **[旅行者背包 (Traveler's Backpack)](https://www.curseforge.com/minecraft/mc-mods/travelers-backpack)**（Fabric 与 NeoForge）打造的附属模组。本模组在背包侧栏新增了 **5 种堆叠升级插件**，放入后即可按倍率提升背包内单个格子的物品堆叠上限。
 
 ---
 
@@ -162,7 +162,7 @@ This mod is dual-licensed under **LGPL-3.0-or-later OR MIT**:
 
 ## ⚙️ 配置
 
-模组列表（Mod Menu）里的“配置”按钮可打开配置界面（界面由 Forge Config API Port 提供，未安装时按默认值运行）。
+模组列表里的“配置”按钮可打开配置界面；Fabric 下需要安装 Mod Menu 与 Forge Config API Port，未安装时按默认值运行。
 
 ### 配置文件 `config/tbstackupgrades-common.toml`：
 

@@ -1,0 +1,26 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+neoForge {
+    version = neoforge_version
+}
+
+repositories {
+    // 国内镜像与 Maven Central 放在前面：本机访问 maven.neoforged.net 会 TLS 握手失败。
+    maven {
+        name = 'AliyunPublic'
+        url = 'https://maven.aliyun.com/repository/public'
+    }
+    mavenCentral()
+    maven {
+        name = 'NeoForged'
+        url = 'https://maven.neoforged.net/releases'
+    }
+}
+
+dependencies {
+    // Traveler's Backpack is installed by the player; compile time only, never bundled.
+    compileOnly files("${rootDir}/libs/${travelersbackpack_neo_jar}")
+}

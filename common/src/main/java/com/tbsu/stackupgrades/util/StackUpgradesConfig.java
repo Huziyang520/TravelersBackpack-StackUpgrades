@@ -8,16 +8,15 @@
 
 package com.tbsu.stackupgrades.util;
 
-import net.fabricmc.loader.api.FabricLoader;
-
-
 /**
- * Values shared by every side. The TOML config and its screen are provided by
- * Forge Config API Port when it is installed; without it the defaults below are
- * used as-is, so the mod never hard-depends on that library.
+ * Values shared by every side.
  *
- * <p>Fields are written by {@code ConfigSpecBootstrap} after the config loads, so
- * every reader can keep taking them directly.</p>
+ * <p>The TOML file and its screen are provided by each loader: NeoForge's own
+ * config API, and Forge Config API Port on Fabric (both optional there, the
+ * defaults below are used when it is missing).</p>
+ *
+ * <p>Fields are written by the loader's config bootstrap after the config loads,
+ * so every reader can keep taking them directly.</p>
  */
 public final class StackUpgradesConfig {
     public static final int DEFAULT_MAX_SLOT_LIMIT = 1_073_741_824;
@@ -31,21 +30,18 @@ public final class StackUpgradesConfig {
     public static double lootChanceMultiplier = 1.0D;
     public static double lootTier4Chance = 0.01D;
 
-    /** Client side switch: shift-click merges items whose max stack size is not 64. */
+    /**
+     * Shift-click merges items whose max stack size is not 64.
+     *
+     * <p>Both switches below are read while the server performs the action
+     * (shift-click transfer and the backpack sorter both run server side), so
+     * they live in the common config: a client-only config would be ignored on
+     * a dedicated server.</p>
+     */
     public static boolean quickTransferStacking = true;
-    /** Client side switch: the sort button merges up to the upgraded capacity. */
+    /** The sort button merges up to the upgraded capacity. */
     public static boolean sorterStacking = true;
 
     private StackUpgradesConfig() {
-    }
-
-    /**
-     * Registers the TOML config when Forge Config API Port is present, otherwise
-     * imports nothing and keeps the defaults.
-     */
-    public static void load() {
-        if (FabricLoader.getInstance().isModLoaded("forgeconfigapiport")) {
-            ConfigSpecBootstrap.register();
-        }
     }
 }

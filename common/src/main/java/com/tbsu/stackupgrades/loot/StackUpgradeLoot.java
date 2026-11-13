@@ -11,7 +11,6 @@ package com.tbsu.stackupgrades.loot;
 import com.tbsu.stackupgrades.ModItems;
 import com.tbsu.stackupgrades.upgrade.StackTier;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
-import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -19,12 +18,17 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Adds the upgrades to vanilla structure loot as their own pools, so other mods'
  * pools and datapack overrides of the same table keep working. Chances follow
  * the addon's tier order: early structures only drop the low tiers.
+ *
+ * <p>The pools are built here, but attaching them to a table is loader specific
+ * (Fabric modifies the table builder, NeoForge adds them to the loaded table),
+ * so this class only hands the builders out.</p>
  */
 public final class StackUpgradeLoot {
     private record Drop(ResourceKey<LootTable> table, StackTier tier, float chance) {
@@ -57,26 +61,31 @@ public final class StackUpgradeLoot {
     private StackUpgradeLoot() {
     }
 
-    public static void register() {
-        LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
-            if (!StackUpgradesConfig.lootEnabled) {
-                return;
+    /**
+     * Loot pools to attach to the given table. Empty when the table is not in the
+     * drop table, or when the related chances are turned off in the config.
+     */
+    public static List<LootPool.Builder> poolsFor(ResourceKey<LootTable> table) {
+        if (!StackUpgradesConfig.lootEnabled) {
+            return List.of();
+        }
+
+        List<LootPool.Builder> pools = new ArrayList<>(2);
+        for (Drop drop : DROPS) {
+            if (!drop.table().equals(table)) {
+                continue;
             }
-            for (Drop drop : DROPS) {
-                if (!drop.table().equals(key)) {
-                    continue;
-                }
-                float chance = drop.tier() == StackTier.TIER_4
-                        ? (float) StackUpgradesConfig.lootTier4Chance
-                        : drop.chance();
-                chance *= (float) StackUpgradesConfig.lootChanceMultiplier;
-                if (chance <= 0.0F) {
-                    continue;
-                }
-                tableBuilder.withPool(LootPool.lootPool()
-                        .add(LootItem.lootTableItem(ModItems.get(drop.tier())))
-                        .when(LootItemRandomChanceCondition.randomChance(chance)));
+            float chance = drop.tier() == StackTier.TIER_4
+                    ? (float) StackUpgradesConfig.lootTier4Chance
+                    : drop.chance();
+            chance *= (float) StackUpgradesConfig.lootChanceMultiplier;
+            if (chance <= 0.0F) {
+                continue;
             }
-        });
+            pools.add(LootPool.lootPool()
+                    .add(LootItem.lootTableItem(ModItems.get(drop.tier())))
+                    .when(LootItemRandomChanceCondition.randomChance(chance)));
+        }
+        return pools;
     }
 }

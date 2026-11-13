@@ -4,13 +4,7 @@
  * License: SPDX-License-Identifier: LGPL-3.0-or-later OR MIT
  *
  * This class is part of the Mixin layer and injects into Traveler's Backpack
- * (LGPL-3.0) and/or Minecraft classes at runtime. It is deliberately licensed
- * under LGPL-3.0-or-later so that even the strictest reading of the LGPL
- * (mixin = modification of the library) is satisfied; the MIT option remains
- * available to downstream users. See THIRD-PARTY-NOTICES.md and LICENSE.
- *
- * 本类属于 Mixin 注入层，运行时注入 Traveler's Backpack（LGPL-3.0）与 Minecraft 类。
- * 为满足 LGPL 最严格的解读，本层特意采用 LGPL-3.0-or-later 许可（同时保留 MIT 选项）。
+ * (LGPL-3.0) and/or Minecraft classes at runtime.
  */
 
 package com.tbsu.stackupgrades.mixin;
@@ -27,9 +21,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Applies the stack upgrade multiplier to the backpack storage handler.
- * Only handlers that had a {@link BackpackWrapper} bound by
- * {@link BackpackWrapperMixin} are affected, everything else keeps behaving
+ * Fabric storage handler: applies the stack upgrade multiplier to the slot
+ * limit. Only handlers that had a {@link BackpackWrapper} bound by
+ * {@code BackpackWrapperMixin} are affected, everything else keeps behaving
  * exactly like before.
  */
 @Mixin(ItemStackHandler.class)
@@ -45,6 +39,16 @@ public abstract class ItemStackHandlerMixin implements StackLimitProvider {
     @Override
     public BackpackWrapper tbsu$getBackpackWrapper() {
         return this.tbstackupgrades$wrapper;
+    }
+
+    @Override
+    public int tbsu$size() {
+        return ((ItemStackHandler) (Object) this).getSlots();
+    }
+
+    @Override
+    public ItemStack tbsu$stack(int index) {
+        return ((ItemStackHandler) (Object) this).getStackInSlot(index);
     }
 
     @Inject(method = "getSlotLimit", at = @At("HEAD"), cancellable = true)
