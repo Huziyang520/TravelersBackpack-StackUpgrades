@@ -34,5 +34,21 @@
   "tbstackupgrades.configuration.controls.quickTransferStacking": "Shift-click merges large stacks",
   "tbstackupgrades.configuration.controls.quickTransferStacking.tooltip": "Shift-clicking into the backpack merges items whose max stack size is not 64.",
   "tbstackupgrades.configuration.controls.sorterStacking": "Sorter merges up to the upgraded capacity",
-  "tbstackupgrades.configuration.controls.sorterStacking.tooltip": "The sort button merges stacks up to the upgraded capacity instead of the vanilla 64."
+  "tbstackupgrades.configuration.controls.sorterStacking.tooltip": "The sort button merges stacks up to the upgraded capacity instead of the vanilla 64.",
+  "tbstackupgrades.configuration.allowNonStackableItems": "Scale non-stackable items",
+  "tbstackupgrades.configuration.allowNonStackableItems.tooltip": "Items with a max stack size of 1 (tools, armor) also get the multiplier.",
+  "tbstackupgrades.configuration.allowDuplicateStackUpgrades": "Allow duplicate upgrades",
+  "tbstackupgrades.configuration.allowDuplicateStackUpgrades.tooltip": "Allow installing the same stack upgrade tier more than once.",
+  "tbstackupgrades.configuration.maxSlotLimit": "Slot capacity cap",
+  "tbstackupgrades.configuration.maxSlotLimit.tooltip": "Upper bound for the capacity of a single backpack slot.",
+  "tbstackupgrades.configuration.lootEnabled": "Add upgrades to structure loot",
+  "tbstackupgrades.configuration.lootEnabled.tooltip": "Put the stack upgrades into vanilla structure chests.",
+  "tbstackupgrades.configuration.lootChanceMultiplier": "Loot chance multiplier",
+  "tbstackupgrades.configuration.lootChanceMultiplier.tooltip": "Multiplies every structure loot chance. 0 turns them off.",
+  "tbstackupgrades.configuration.lootTier4Chance": "Tier 4 chance in bastion treasure",
+  "tbstackupgrades.configuration.lootTier4Chance.tooltip": "Chance of the tier 4 upgrade in bastion treasure.",
+  "tbstackupgrades.configuration.quickTransferStacking": "Shift-click merges large stacks",
+  "tbstackupgrades.configuration.quickTransferStacking.tooltip": "Shift-clicking into the backpack merges items whose max stack size is not 64.",
+  "tbstackupgrades.configuration.sorterStacking": "Sorter merges up to the upgraded capacity",
+  "tbstackupgrades.configuration.sorterStacking.tooltip": "The sort button merges stacks up to the upgraded capacity instead of the vanilla 64."
 }

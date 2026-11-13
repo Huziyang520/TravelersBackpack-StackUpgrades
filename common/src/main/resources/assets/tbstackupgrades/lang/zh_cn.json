@@ -34,5 +34,21 @@
   "tbstackupgrades.configuration.controls.quickTransferStacking": "Shift 点击并入大堆",
   "tbstackupgrades.configuration.controls.quickTransferStacking.tooltip": "Shift 点击放入背包时，最大堆叠不是 64 的物品也会合并。",
   "tbstackupgrades.configuration.controls.sorterStacking": "整理按升级后容量合并",
-  "tbstackupgrades.configuration.controls.sorterStacking.tooltip": "点整理时按升级后的容量合并，而不是原版 64。"
+  "tbstackupgrades.configuration.controls.sorterStacking.tooltip": "点整理时按升级后的容量合并，而不是原版 64。",
+  "tbstackupgrades.configuration.allowNonStackableItems": "对不可堆叠物品生效",
+  "tbstackupgrades.configuration.allowNonStackableItems.tooltip": "最大堆叠为 1 的物品（工具、盔甲）同样按倍率提升。",
+  "tbstackupgrades.configuration.allowDuplicateStackUpgrades": "允许重复安装",
+  "tbstackupgrades.configuration.allowDuplicateStackUpgrades.tooltip": "允许同一等级的堆叠升级重复安装。",
+  "tbstackupgrades.configuration.maxSlotLimit": "单格容量封顶",
+  "tbstackupgrades.configuration.maxSlotLimit.tooltip": "单个背包格容量的上限。",
+  "tbstackupgrades.configuration.lootEnabled": "加入结构战利品",
+  "tbstackupgrades.configuration.lootEnabled.tooltip": "把堆叠升级放进原版结构箱子。",
+  "tbstackupgrades.configuration.lootChanceMultiplier": "战利品概率倍率",
+  "tbstackupgrades.configuration.lootChanceMultiplier.tooltip": "所有结构战利品概率的倍数，0 为关闭。",
+  "tbstackupgrades.configuration.lootTier4Chance": "堡垒宝藏的四级概率",
+  "tbstackupgrades.configuration.lootTier4Chance.tooltip": "堡垒宝藏中出现四级升级的概率。",
+  "tbstackupgrades.configuration.quickTransferStacking": "Shift 点击并入大堆",
+  "tbstackupgrades.configuration.quickTransferStacking.tooltip": "Shift 点击放入背包时，最大堆叠不是 64 的物品也会合并。",
+  "tbstackupgrades.configuration.sorterStacking": "整理按升级后容量合并",
+  "tbstackupgrades.configuration.sorterStacking.tooltip": "点整理时按升级后的容量合并，而不是原版 64。"
 }

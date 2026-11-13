@@ -19,6 +19,7 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -41,9 +42,14 @@ public final class StackUpgradesNeoForge {
 
     public StackUpgradesNeoForge(IEventBus modBus, ModContainer container) {
         for (StackTier tier : StackTier.values()) {
-            StackUpgradeItem item = ModItems.create(tier);
-            ModItems.remember(item);
-            ITEMS.register(tier.itemName(), () -> item);
+            // The item must be constructed at the register event: Item's constructor
+            // writes an intrusive holder, and the item registry is already frozen
+            // while mods are being constructed.
+            ITEMS.register(tier.itemName(), () -> {
+                StackUpgradeItem item = ModItems.create(tier);
+                ModItems.remember(item);
+                return item;
+            });
         }
         ITEMS.register(modBus);
 
@@ -55,8 +61,11 @@ public final class StackUpgradesNeoForge {
         container.registerExtensionPoint(IConfigScreenFactory.class, screenFactory);
 
         modBus.addListener(StackUpgradesNeoForge::addCreativeTabEntries);
+        modBus.addListener(StackUpgradesNeoForge::logConfiguration);
         NeoForge.EVENT_BUS.addListener(StackUpgradesNeoForge::addLootPools);
+    }
 
+    private static void logConfiguration(FMLCommonSetupEvent event) {
         StackUpgrades.LOGGER.info("Stack upgrades registered ({} tiers, non-stackable items: {}, max slot limit: {})",
                 ModItems.ALL.size(),
                 StackUpgradesConfig.allowNonStackableItems ? "enabled" : "disabled",

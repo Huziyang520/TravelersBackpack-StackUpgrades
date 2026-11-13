@@ -1,3 +1,4 @@
+![TBStackUpgrades](StackUpgrades.png)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?style=flat-square&logo=github)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades)
 [![GitHub Issues](https://img.shields.io/badge/GitHub-Issues-brightgreen?style=flat-square&logo=github)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues)
 [![License](https://img.shields.io/badge/License-LGPL--3.0%20OR%20MIT-yellow.svg?style=flat-square)](https://github.com/Huziyang520/TravelersBackpack-StackUpgrades)
