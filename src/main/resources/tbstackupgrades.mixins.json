@@ -15,8 +15,7 @@
     "StackHandlerMixin",
     "StackSlotMixin",
     "UpgradeLockableSlotItemHandlerMixin",
-    "UpgradeManagerMixin",
-    "UpgradesHandlerMixin"
+    "UpgradeManagerMixin"
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
@@ -28,4 +27,5 @@
     "defaultRequire": 1
   }
 }
+
 
