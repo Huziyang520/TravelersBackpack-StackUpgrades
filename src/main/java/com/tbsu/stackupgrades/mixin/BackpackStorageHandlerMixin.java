@@ -27,12 +27,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * the override has to be intercepted where it is declared.
  *
  * <p>{@code BackpackWrapper#loadStorage} binds the wrapper to the storage handler
- * only, so the upgrade and tool handlers stay untouched.</p>
+ * only, so the upgrade and tool handlers stay untouched. The upgrade handler
+ * ({@code BackpackWrapper$2}) keeps its one-item slot limit on purpose.</p>
  */
-@Mixin(targets = {
-        "com.tiviacz.travelersbackpack.inventory.BackpackWrapper$1",
-        "com.tiviacz.travelersbackpack.inventory.BackpackWrapper$2"
-})
+@Mixin(targets = "com.tiviacz.travelersbackpack.inventory.BackpackWrapper$1")
+
 public abstract class BackpackStorageHandlerMixin implements StackLimitProvider {
     @Unique
     private BackpackWrapper tbstackupgrades$wrapper;
@@ -76,3 +75,4 @@ public abstract class BackpackStorageHandlerMixin implements StackLimitProvider 
         cir.setReturnValue(StackLimits.capacity(((ItemStackHandler) (Object) this).getStackInSlot(slot), multiplier));
     }
 }
+
