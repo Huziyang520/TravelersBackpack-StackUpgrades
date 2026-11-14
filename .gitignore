@@ -1,0 +1,23 @@
+# Gradle / build output
+.gradle/
+build/
+libs/
+run/
+runs/
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+Thumbs.db
+.DS_Store
+
+# Jars: only the Gradle wrapper jar belongs in the repository
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# local test instances and logs
+.minecraft/
+logs/
+hs_err*
+crash-*

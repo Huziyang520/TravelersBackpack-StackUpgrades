@@ -1,0 +1,55 @@
+/*
+ * This file is part of Stack Upgrades, an addon for Traveler's Backpack.
+ * SPDX-License-Identifier: MIT
+ *
+ * 本文件为原创代码，以 MIT 协议发布（见 LICENSE）。
+ * 注意：mixin/ 目录下的注入层类采用 LGPL-3.0-or-later OR MIT 双许可。
+ */
+
+package com.tbsu.stackupgrades.util;
+
+/**
+ * Values shared by every side.
+ *
+ * <p>The TOML file is provided by the loader's own config API; the fields below
+ * are written by its bootstrap after the config loads, so every reader can keep
+ * taking them directly.</p>
+ */
+public final class StackUpgradesConfig {
+    public static final int DEFAULT_MAX_SLOT_LIMIT = 1_073_741_824;
+    public static final int HARD_MAX_SLOT_LIMIT = 1_073_741_824;
+
+    public static boolean allowNonStackableItems = true;
+    public static boolean allowDuplicateStackUpgrades = true;
+    public static int maxSlotLimit = DEFAULT_MAX_SLOT_LIMIT;
+
+    public static boolean lootEnabled = true;
+    public static double lootChanceMultiplier = 1.0D;
+    public static double lootTier4Chance = 0.01D;
+
+    /**
+     * Shift-click merges items whose max stack size is not 64.
+     *
+     * <p>Both switches below are read while the server performs the action
+     * (shift-click transfer and the backpack sorter both run server side), so
+     * they live in the common config: a client-only config would be ignored on
+     * a dedicated server.</p>
+     */
+    public static boolean quickTransferStacking = true;
+    /** The sort button merges up to the upgraded capacity. */
+    public static boolean sorterStacking = true;
+
+    /**
+     * Right-click picks up at most {@link ClickLimits#RIGHT_CLICK_PICKUP} items
+     * instead of half of an oversized stack.
+     */
+    public static boolean rightClickPickupLimit = true;
+    /**
+     * Shift-click moves at most the item's own max stack size out of a slot that
+     * holds more than that.
+     */
+    public static boolean shiftTransferLimit = true;
+
+    private StackUpgradesConfig() {
+    }
+}

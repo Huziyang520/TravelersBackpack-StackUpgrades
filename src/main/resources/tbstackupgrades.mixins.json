@@ -1,0 +1,31 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.tbsu.stackupgrades.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "tbstackupgrades.refmap.json",
+  "mixins": [
+    "AbstractContainerMenuMixin",
+    "BackpackBaseMenuMixin",
+    "BackpackWrapperMixin",
+    "ContainerSorterMixin",
+    "FriendlyByteBufMixin",
+    "ItemStackMixin",
+    "ServerActionsMixin",
+    "StackHandlerMixin",
+    "StackSlotMixin",
+    "UpgradeLockableSlotItemHandlerMixin",
+    "UpgradeManagerMixin",
+    "UpgradesHandlerMixin"
+  ],
+  "client": [
+    "client.AbstractContainerScreenMixin",
+    "client.GuiGraphicsMixin",
+    "client.UpgradeWidgetBaseMixin",
+    "client.UpgradeWidgetTooltipMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
+

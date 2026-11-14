@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "item": "minecraft:netherite_block"
+    },
+    "S": {
+      "item": "tbstackupgrades:stack_upgrade_tier_3"
+    }
+  },
+  "pattern": [
+    "NNN",
+    "NSN",
+    "NNN"
+  ],
+  "result": {
+    "item": "tbstackupgrades:stack_upgrade_tier_4",
+    "count": 1
+  }
+}

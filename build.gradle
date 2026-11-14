@@ -1,0 +1,155 @@
+buildscript {
+    repositories {
+        maven { name = 'AliyunPublic'; url = 'https://maven.aliyun.com/repository/public' }
+        mavenCentral()
+        maven { name = 'Sponge'; url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    }
+    dependencies {
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7.38'
+    }
+}
+
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '6.0.54'
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+version = property('version')
+group = property('group')
+
+base {
+    // 产物名：<mod_id>-<loader>-<MC>-<version>.jar（version 由 Gradle 追加）
+    archivesName = "${mod_id}-forge-${minecraft_version_slug}"
+}
+repositories {
+    maven { name = 'AliyunPublic'; url = 'https://maven.aliyun.com/repository/public' }
+    mavenCentral()
+    maven { name = 'MinecraftForge'; url = 'https://maven.minecraftforge.net/' }
+    maven { name = 'Sponge'; url = 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version.toInteger())
+}
+
+minecraft {
+    mappings channel: 'official', version: minecraft_version
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+        server {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
+    // Traveler's Backpack is installed by the player; compile time only, never bundled.
+    // fg.deobf is required: the published jar is SRG mapped, our workspace is official mapped.
+    compileOnly fg.deobf(files("libs/${travelersbackpack_jar}"))
+
+    // The refmap is produced by the Mixin annotation processor; 0.8.5 matches the
+    // version Forge 1.20.1 itself ships.
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+    // 1.20.1 runs on SRG names, so the refmap is mandatory.
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
+}
+
+// 源码含中文注释：Windows 默认 GBK 会让 javac 报「不可映射字符」，统一钉 UTF-8。
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Gradle 9 hands `gradle.properties` values back as ISO-8859-1 even though the file is UTF-8,
+// so a non-ASCII character arrives as mojibake (中文变成 "è¿™ä¸ª"). Re-decode such values;
+// a value that already contains characters above U+00FF was decoded correctly and is left alone.
+String decodeProp(Object value) {
+    String s = String.valueOf(value)
+    if (s.codePoints().anyMatch { int cp -> cp > 0xFF }) {
+        return s
+    }
+    String fixed = new String(s.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1),
+            java.nio.charset.StandardCharsets.UTF_8)
+    return fixed.contains('\uFFFD') ? s : fixed
+}
+
+processResources {
+    filteringCharset = 'UTF-8'
+
+    var expandProps = [
+            'version'                  : version,
+            'group'                    : project.group,
+            'minecraft_version'        : minecraft_version,
+            'minecraft_version_slug'   : minecraft_version_slug,
+            'minecraft_version_range'  : minecraft_version_range,
+            'forge_version'            : forge_version,
+            'forge_version_range'      : forge_version_range,
+            'travelersbackpack_version': travelersbackpack_version,
+            'mod_name'                 : mod_name,
+            'mod_author'               : mod_author,
+            'mod_id'                   : mod_id,
+            'license'                  : license,
+            'description'              : decodeProp(project.description),
+            'java_version'             : java_version
+    ]
+
+    var jsonExpandProps = expandProps.collectEntries {
+        // A real newline is illegal inside a JSON string, so it has to be written as
+        // the two-character escape. TOML takes the real newline (see below).
+        key, value -> [(key): value instanceof String ? value.replace('\n', '\\n') : value]
+    }
+
+    filesMatching(['pack.mcmeta', '*.mixins.json']) {
+        expand jsonExpandProps
+    }
+
+    // TOML keeps real newlines: the description is a multi-line literal string.
+    filesMatching(['META-INF/mods.toml']) {
+        expand expandProps
+    }
+
+    inputs.properties(expandProps)
+}
+
+tasks.withType(Jar).configureEach {
+    from('LICENSE') {
+        rename { "${it}_${mod_name}" }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                'Specification-Title'   : mod_name,
+                'Specification-Vendor'  : mod_author,
+                'Specification-Version' : archiveVersion,
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': archiveVersion,
+                'Implementation-Vendor' : mod_author,
+                'Built-On-Minecraft'    : minecraft_version
+        ])
+    }
+}
+
