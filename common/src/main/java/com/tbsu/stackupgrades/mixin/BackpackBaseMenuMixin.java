@@ -49,7 +49,10 @@ public abstract class BackpackBaseMenuMixin {
             return;
         }
 
-        if (UpgradeRemovalGuard.blocksRemoval(self.getWrapper(), slot.index)) {
+        // The guard works on the upgrade handler index, which is the container
+        // slot of the upgrade slot and not the menu index of it.
+        int upgradeSlotIndex = slot.getContainerSlot();
+        if (UpgradeRemovalGuard.blocksRemoval(self.getWrapper(), upgradeSlotIndex)) {
             UpgradeRemovalGuard.notifyBlocked(player);
             cir.setReturnValue(ItemStack.EMPTY);
         }

@@ -35,7 +35,8 @@ public final class ClickLimits {
     }
 
     /**
-     * Starts the click state.
+     * Starts the click state. Called for every click, so it also clears whatever a
+     * previous click left behind after an exception.
      *
      * @param budget items this click may move in total, 0 for no limit
      */
@@ -48,6 +49,8 @@ public final class ClickLimits {
             BUDGET.remove();
             SPENT.remove();
         }
+        MOVE_START.remove();
+        MOVE_STACK.remove();
     }
 
     public static void endClick() {
@@ -100,18 +103,43 @@ public final class ClickLimits {
     /**
      * Amount to take for the current click.
      *
-     * <p>A right click asks for half of the stack, which on an oversized stack is
-     * far more than the player wants. Taking the whole stack is a left click and
-     * stays untouched, so only requests below the available amount are clamped.</p>
+     * <p>Nothing but one vanilla stack may leave an oversized slot: a stack above
+     * the item's own limit cannot be serialized outside the backpack (vanilla caps
+     * the count at 99), so it would be deleted the next time the world is saved.
+     * A right click additionally takes only {@link #RIGHT_CLICK_PICKUP} items while
+     * the option is on.</p>
      */
-    public static int clampPickup(int amount, int available) {
+    public static int clampPickup(int amount, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
+            return amount;
+        }
+
+        int itemMax = stack.getMaxStackSize();
+        if (stack.getCount() <= itemMax) {
+            return amount;
+        }
+
+        int capped = Math.min(Math.max(1, amount), itemMax);
         Integer button = BUTTON.get();
-        if (!StackUpgradesConfig.rightClickPickupLimit || button == null || button != 1) {
+        if (StackUpgradesConfig.rightClickPickupLimit && button != null && button == 1) {
+            capped = Math.min(capped, Math.min(RIGHT_CLICK_PICKUP, itemMax));
+        }
+        return Math.max(1, capped);
+    }
+
+    /**
+     * Amount a throw or a pick-all may remove from the slot in one go. Oversized
+     * stacks are split so that no dropped entity or player inventory slot ever
+     * holds more than the item's own limit.
+     */
+    public static int clampExtract(int amount, ItemStack stack) {
+        if (stack == null || stack.isEmpty()) {
             return amount;
         }
-        if (amount >= available) {
+        int itemMax = stack.getMaxStackSize();
+        if (stack.getCount() <= itemMax) {
             return amount;
         }
-        return Math.min(amount, RIGHT_CLICK_PICKUP);
+        return Math.min(amount, itemMax);
     }
 }

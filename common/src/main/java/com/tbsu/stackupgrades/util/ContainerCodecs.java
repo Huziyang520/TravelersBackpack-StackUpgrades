@@ -28,13 +28,16 @@ import java.util.List;
  * serialization ({@code ItemStackTemplate.MAP_CODEC} / {@code ItemStack.MAP_CODEC}).
  * Traveler's Backpack persists its contents through {@code ItemContainerContents},
  * so slots holding more than 99 items would fail to save. These codecs encode the
- * same layout without the artificial cap, which is required for the higher stack
- * upgrade tiers (128 / 256 / 512 / 1024).
+ * same layout with a cap of {@link StackUpgradesConfig#HARD_MAX_SLOT_LIMIT}
+ * instead, which is required for the higher stack upgrade tiers
+ * (128 / 256 / 512 / 1024) while still rejecting corrupted data.
  */
 public final class ContainerCodecs {
     private static final Codec<ItemStackTemplate> TEMPLATE_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Item.CODEC.fieldOf("id").forGetter(ItemStackTemplate::item),
-            Codec.INT.optionalFieldOf("count", 1).forGetter(ItemStackTemplate::count),
+            Codec.intRange(1, StackUpgradesConfig.HARD_MAX_SLOT_LIMIT)
+                    .optionalFieldOf("count", 1)
+                    .forGetter(ItemStackTemplate::count),
             DataComponentPatch.CODEC.optionalFieldOf("components", DataComponentPatch.EMPTY).forGetter(ItemStackTemplate::components)
     ).apply(instance, ItemStackTemplate::new));
 
@@ -89,9 +92,15 @@ public final class ContainerCodecs {
     /**
      * Builds the stack directly, bypassing {@code ItemStackTemplate.create()}
      * which would reject counts above the vanilla stack size.
+     * <p>
+     * The count is clamped to the hard cap as well: every later
+     * {@code count + count} in the storage handlers is an {@code int}, so a value
+     * near {@code Integer.MAX_VALUE} would wrap negative and make an occupied slot
+     * look empty.
      */
     public static ItemStack createStack(ItemStackTemplate template) {
-        return new ItemStack(template.typeHolder(), template.count(), template.components());
+        int count = Math.min(template.count(), StackUpgradesConfig.HARD_MAX_SLOT_LIMIT);
+        return new ItemStack(template.typeHolder(), Math.max(1, count), template.components());
     }
 
     private record SlotEntry(int index, ItemStackTemplate template) {
