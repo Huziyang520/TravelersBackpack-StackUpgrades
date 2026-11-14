@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        // 国内镜像放在官方源之前（只覆盖 mavenCentral / gradlePluginPortal / google）
+        maven {
+            name = 'AliyunPublic'
+            url = 'https://maven.aliyun.com/repository/public'
+        }
+        maven {
+            name = 'AliyunGradlePlugin'
+            url = 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            name = 'NeoForged'
+            url = 'https://maven.neoforged.net/releases'
+        }
+    }
+}
+
+rootProject.name = 'TravelersBackpack-StackUpgrades-1.21.1'
