@@ -32,14 +32,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 /**
- * Shift-click transfer only merges stacks when {@code ItemStack#isStackable()} is
- * true, which is decided by the item's own max stack size. Items whose max size
- * is 1 therefore never merge into an upgraded backpack slot. While the move
- * targets backpack slots with a multiplier, they are treated as stackable.
- * <p>
- * The click state is tracked on {@code clicked} rather than {@code doClick}:
+ * Shift-click transfer on 1.20.1.
+ *
+ * <p>Two things keep vanilla from filling an upgraded slot: the merge is skipped
+ * entirely for items whose max stack size is 1 ({@code ItemStack#isStackable}),
+ * and it is capped at {@code min(slotLimit, itemMaxStackSize)}, which stops at the
+ * item's own stack size no matter how large the slot is. Both are replaced for
+ * the duration of one transfer; every other slot keeps vanilla behaviour.</p>
+ *
+ * <p>The click state is tracked on {@code clicked} rather than {@code doClick}:
  * Traveler's Backpack overrides {@code doClick} and does not always delegate to
- * it, while {@code clicked} is always the entry point.
+ * it, while {@code clicked} is always the entry point.</p>
  */
 @Mixin(AbstractContainerMenu.class)
 public abstract class AbstractContainerMenuMixin {
@@ -50,12 +53,17 @@ public abstract class AbstractContainerMenuMixin {
     @Unique
     private static final ThreadLocal<Boolean> tbstackupgrades$stackable = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
+    @Unique
+    private static final ThreadLocal<Integer> tbstackupgrades$mergeCap = ThreadLocal.withInitial(() -> 0);
+
     @Inject(method = "moveItemStackTo", at = @At("HEAD"))
     private void tbstackupgrades$markRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                            CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.set(StackUpgradesConfig.quickTransferStacking
                 && !stack.isEmpty()
                 && StackLimits.hasUpgradedSlot((AbstractContainerMenu) (Object) this, startIndex, endIndex));
+        tbstackupgrades$mergeCap.set(StackLimits.mergeCapacity((AbstractContainerMenu) (Object) this,
+                startIndex, endIndex, stack));
         ClickLimits.beginMove(stack);
     }
 
@@ -63,6 +71,7 @@ public abstract class AbstractContainerMenuMixin {
     private void tbstackupgrades$clearRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                             CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.remove();
+        tbstackupgrades$mergeCap.remove();
         ClickLimits.endMove();
     }
 
@@ -72,10 +81,16 @@ public abstract class AbstractContainerMenuMixin {
         return stack.isStackable() || tbstackupgrades$stackable.get();
     }
 
+    /** Replaces the item side of {@code min(slotLimit, itemMaxStackSize)}. */
+    @Redirect(method = "moveItemStackTo",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getMaxStackSize()I"))
+    private int tbstackupgrades$widenMergeCap(ItemStack stack) {
+        int cap = tbstackupgrades$mergeCap.get();
+        return cap > 0 ? Math.max(cap, stack.getMaxStackSize()) : stack.getMaxStackSize();
+    }
+
     /**
      * Caps how much one shift click may move in total, see {@link ClickLimits#allowance}.
-     * 1.20.1 has no {@code getMaxStackSize(ItemStack)}; the merge target uses the
-     * no-argument slot limit, which already reports the upgraded capacity.
      */
     @Redirect(method = "moveItemStackTo",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;getMaxStackSize()I"))

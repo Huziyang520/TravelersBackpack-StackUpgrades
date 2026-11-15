@@ -89,6 +89,63 @@ public final class StackLimits {
     }
 
     /**
+     * Capacity the merge inside a transfer should use for the given stack, taken
+     * from the first upgraded backpack slot in the range.
+     *
+     * <p>1.20.1 caps a merge at {@code min(slotLimit, itemMaxStackSize)}, so raising
+     * the slot limit alone still stops every merge at the item's own stack size.
+     * This value replaces the item side of that comparison.</p>
+     *
+     * @return the upgraded capacity, or 0 when the range holds no upgraded slot
+     */
+    public static int mergeCapacity(AbstractContainerMenu menu, int start, int end, ItemStack stack) {
+        int from = Math.max(0, start);
+        int to = Math.min(menu.slots.size(), end);
+        for (int i = from; i < to; i++) {
+            Slot slot = menu.slots.get(i);
+            if (!(slot instanceof SlotLimitProvider slotProvider)) {
+                continue;
+            }
+            StackLimitProvider provider = slotProvider.tbsu$limitProvider();
+            if (provider == null) {
+                continue;
+            }
+            BackpackWrapper wrapper = provider.tbsu$getBackpackWrapper();
+            if (wrapper == null) {
+                continue;
+            }
+            double multiplier = multiplier(wrapper);
+            if (multiplier > 1.0D) {
+                return capacity(stack, multiplier);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Capacity of the given slot for the given stack, or 0 when the slot does not
+     * belong to an upgraded backpack.
+     */
+    public static int slotCapacity(Slot slot, ItemStack stack) {
+        if (slot == null || !(slot instanceof SlotLimitProvider slotProvider)) {
+            return 0;
+        }
+        StackLimitProvider provider = slotProvider.tbsu$limitProvider();
+        if (provider == null) {
+            return 0;
+        }
+        BackpackWrapper wrapper = provider.tbsu$getBackpackWrapper();
+        if (wrapper == null) {
+            return 0;
+        }
+        double multiplier = multiplier(wrapper);
+        if (multiplier <= 1.0D) {
+            return 0;
+        }
+        return capacity(stack, multiplier);
+    }
+
+    /**
      * Slot capacity for the given stack inside a backpack with the given multiplier.
      */
     public static int capacity(ItemStack stack, double multiplier) {

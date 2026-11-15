@@ -9,8 +9,8 @@
 
 package com.tbsu.stackupgrades.mixin;
 
-import com.tiviacz.travelersbackpack.common.ServerActions;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
+import com.tiviacz.travelersbackpack.common.ServerActions;
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tbsu.stackupgrades.util.UpgradeRemovalGuard;
 import net.minecraft.server.level.ServerPlayer;
@@ -38,5 +38,7 @@ public abstract class ServerActionsMixin {
         }
     }
 }
+
+
 
 

@@ -10,7 +10,6 @@
 package com.tbsu.stackupgrades.mixin;
 
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
-import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
 import com.tbsu.stackupgrades.util.ClickLimits;
 import com.tbsu.stackupgrades.util.StackLimits;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
@@ -26,12 +25,21 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Shift-clicking an upgrade slot does not go through {@code mayPickup}, so the
- * same guard has to be applied to the quick-move path.
+ * Shift-click handling of the backpack menu.
+ *
+ * <p>The removal guard only reacts to a slot that really holds one of this mod's
+ * stack upgrades. Upgrade, tool and filter slots share the lockable slot class,
+ * so a bare slot-class check refused ordinary transfers and raised the
+ * "cannot remove upgrade" message while items were merely being moved.</p>
+ *
+ * <p>This class overrides Minecraft methods, so the targets are written in their
+ * runtime form and left unmapped: Traveler's Backpack is not part of the
+ * Minecraft mappings.</p>
  */
 @Mixin(BackpackBaseMenu.class)
 public abstract class BackpackBaseMenuMixin {
-    @Inject(method = "quickMoveStack", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "m_7648_(Lnet/minecraft/world/entity/player/Player;I)Lnet/minecraft/world/item/ItemStack;",
+            at = @At("HEAD"), cancellable = true, remap = false)
     private void tbstackupgrades$guardQuickMove(Player player, int index, CallbackInfoReturnable<ItemStack> cir) {
         BackpackBaseMenu self = (BackpackBaseMenu) (Object) this;
         if (index < 0 || index >= self.slots.size()) {
@@ -39,15 +47,7 @@ public abstract class BackpackBaseMenuMixin {
         }
 
         Slot slot = self.slots.get(index);
-        if (!(slot instanceof UpgradeLockableSlotItemHandler lockable) || lockable.isHidden) {
-            return;
-        }
-
-        // The guard works on the upgrade handler index, which is the container
-        // slot of the upgrade slot and not the menu index of it.
-        int upgradeSlotIndex = slot.getContainerSlot();
-        if (UpgradeRemovalGuard.blocksRemoval(self.getWrapper(), upgradeSlotIndex)) {
-            UpgradeRemovalGuard.notifyBlocked(player);
+        if (UpgradeRemovalGuard.blocksRemovalInSlot(self.getWrapper(), slot)) {
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }
@@ -56,12 +56,8 @@ public abstract class BackpackBaseMenuMixin {
     @Unique
     private static final ThreadLocal<Boolean> tbstackupgrades$stackable = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
-    /**
-     * Shift-click into the backpack merges items whose max stack size is not 64:
-     * the menu copies {@code moveItemStackTo} from the base class, so the same
-     * treatment has to be applied here.
-     */
-    @Inject(method = "moveItemStackTo", at = @At("HEAD"))
+    @Inject(method = "m_38903_(Lnet/minecraft/world/item/ItemStack;IIZ)Z",
+            at = @At("HEAD"), remap = false)
     private void tbstackupgrades$markRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                            CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.set(StackUpgradesConfig.quickTransferStacking
@@ -70,25 +66,26 @@ public abstract class BackpackBaseMenuMixin {
         ClickLimits.beginMove(stack);
     }
 
-    @Inject(method = "moveItemStackTo", at = @At("RETURN"))
+    @Inject(method = "m_38903_(Lnet/minecraft/world/item/ItemStack;IIZ)Z",
+            at = @At("RETURN"), remap = false)
     private void tbstackupgrades$clearRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                             CallbackInfoReturnable<Boolean> cir) {
         tbstackupgrades$stackable.remove();
         ClickLimits.endMove();
     }
 
-    @Redirect(method = "moveItemStackTo",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isStackable()Z"))
+    @Redirect(method = "m_38903_(Lnet/minecraft/world/item/ItemStack;IIZ)Z", remap = false,
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;m_41753_()Z"))
     private boolean tbstackupgrades$treatAsStackable(ItemStack stack) {
         return stack.isStackable() || tbstackupgrades$stackable.get();
     }
 
     /** Caps how much one shift click may move in total, see {@link ClickLimits#allowance}. */
-    @Redirect(method = "moveItemStackTo",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/Slot;getMaxStackSize()I"))
-    private int tbstackupgrades$capTransfer(Slot slot) {
-        return ClickLimits.allowance(slot.getMaxStackSize(), slot.getItem());
+    @Redirect(method = "m_38903_(Lnet/minecraft/world/item/ItemStack;IIZ)Z", remap = false,
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/world/inventory/Slot;m_5866_(Lnet/minecraft/world/item/ItemStack;)I"))
+    private int tbstackupgrades$capTransfer(Slot slot, ItemStack stack) {
+        return ClickLimits.allowance(slot.getMaxStackSize(stack), stack);
     }
 }
-
 

@@ -17,10 +17,6 @@ import com.tbsu.stackupgrades.util.StackLimitProvider;
 import com.tbsu.stackupgrades.util.StackLimits;
 import com.tbsu.stackupgrades.util.UpgradeRemovalGuard;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.ClickType;
@@ -43,27 +39,14 @@ import java.util.Locale;
  * <ul>
  *     <li>adds a "amount / capacity" line to the tooltip of backpack slots, mirroring
  *     Sophisticated Backpacks;</li>
- *     <li>refuses clicks on an upgrade slot while oversized stacks would be left
- *     behind, and draws the warning as a red banner (the action bar is not
- *     rendered while a container screen is open).</li>
+ *     <li>refuses taking a stack upgrade out while oversized stacks would be left
+ *     behind; the warning banner itself is drawn by the backpack screen.</li>
  * </ul>
  */
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {
     @Shadow
     protected Slot hoveredSlot;
-
-    @Shadow
-    protected int imageWidth;
-
-    @Shadow
-    protected int imageHeight;
-
-    @Shadow
-    protected int leftPos;
-
-    @Shadow
-    protected int topPos;
 
     @Inject(method = "getTooltipFromContainerItem", at = @At("RETURN"), cancellable = true)
     private void tbstackupgrades$addCapacityLine(ItemStack stack, CallbackInfoReturnable<List<Component>> cir) {
@@ -109,58 +92,29 @@ public abstract class AbstractContainerScreenMixin {
             return;
         }
 
+        // Only taking the upgrade out counts as a removal attempt. Clicking an
+        // upgrade slot while the cursor already holds items inserts them, which
+        // must stay silent and must not be cancelled.
+        if (clickType == ClickType.PICKUP
+                && !((AbstractContainerScreen<?>) (Object) this).getMenu().getCarried().isEmpty()) {
+            return;
+        }
+
         BackpackWrapper wrapper = lockable.menu == null ? null : lockable.menu.getWrapper();
-        int index = slot.getContainerSlot();
-        if (UpgradeRemovalGuard.blocksRemoval(wrapper, index)) {
+        if (UpgradeRemovalGuard.blocksRemovalInSlot(wrapper, slot)) {
+            int index = slot.getContainerSlot();
             StackUpgradeWarning.show(UpgradeRemovalGuard.remainingLimit(wrapper, index));
             ci.cancel();
         }
     }
 
     /**
-     * Draws the "cannot remove upgrade" warning as a banner right above the UI
-     * (below it when there is no room at the top). A fixed banner is where
-     * Sophisticated Backpacks shows its warning as well; a cursor tooltip was easy
-     * to miss and got clipped by the GUI.
+     * Draws the "cannot remove upgrade" warning banner.
+     *
+     * <p>This screen class covers every container in the game, so the banner is
+     * drawn only for the backpack screen (see {@code client.BackpackScreenWarningMixin});
+     * drawing it here made the warning show up over unrelated containers.</p>
      */
-    @Inject(method = "render", at = @At("TAIL"))
-    private void tbstackupgrades$renderWarning(GuiGraphics graphics, int mouseX, int mouseY, float partialTick,
-                                               CallbackInfo ci) {
-        if (!StackUpgradeWarning.active()) {
-            return;
-        }
-
-        Font font = Minecraft.getInstance().font;
-        Component message = Component.translatable("message.tbstackupgrades.cannot_remove_upgrade",
-                String.format(Locale.ROOT, "%,d", StackUpgradeWarning.limit()));
-
-        int textWidth = font.width(message);
-        int boxWidth = textWidth + 12;
-        int boxHeight = 14;
-
-        int centerX = this.leftPos + this.imageWidth / 2;
-        int x = centerX - boxWidth / 2;
-        int screenWidth = ((Screen) (Object) this).width;
-        x = Math.max(2, Math.min(x, screenWidth - boxWidth - 2));
-
-        int screenHeight = ((Screen) (Object) this).height;
-        int y = this.topPos - boxHeight - 5;
-        if (y < 2) {
-            int below = this.topPos + this.imageHeight + 5;
-            // very small windows can leave no room at all - then pin the banner to
-            // the top edge of the UI instead of drawing it off-screen
-            y = below + boxHeight <= screenHeight - 2 ? below : Math.max(2, this.topPos + 3);
-        }
-
-        graphics.fill(x, y, x + boxWidth, y + boxHeight, 0xE0202020);
-        graphics.fill(x, y, x + boxWidth, y + 1, 0xFFC84040);
-        graphics.fill(x, y + boxHeight - 1, x + boxWidth, y + boxHeight, 0xFFC84040);
-        graphics.fill(x, y, x + 1, y + boxHeight, 0xFFC84040);
-        graphics.fill(x + boxWidth - 1, y, x + boxWidth, y + boxHeight, 0xFFC84040);
-
-        graphics.drawString(font, message, x + 6, y + 3, 0xFFFF6060, true);
-    }
-
     @Unique
     private static String format(int value) {
         return String.format(Locale.ROOT, "%,d", value);

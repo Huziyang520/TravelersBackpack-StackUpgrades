@@ -35,9 +35,9 @@ import java.util.Optional;
  */
 @Mixin(UpgradeWidgetBase.class)
 public abstract class UpgradeWidgetTooltipMixin {
-    @Redirect(method = "renderTooltip",
+    @Redirect(method = "renderTooltip(Lnet/minecraft/client/gui/GuiGraphics;II)V", remap = false,
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/gui/GuiGraphics;renderTooltip(Lnet/minecraft/client/gui/Font;Ljava/util/List;Ljava/util/Optional;II)V"))
+                    target = "Lnet/minecraft/client/gui/GuiGraphics;m_280677_(Lnet/minecraft/client/gui/Font;Ljava/util/List;Ljava/util/Optional;II)V"))
     private void tbstackupgrades$addUpgradeLines(GuiGraphics graphics, Font font, List<Component> lines,
                                                  Optional<TooltipComponent> image, int x, int y) {
         List<Component> extended = new ArrayList<>(lines);

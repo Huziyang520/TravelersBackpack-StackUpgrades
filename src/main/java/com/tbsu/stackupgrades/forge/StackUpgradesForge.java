@@ -56,6 +56,7 @@ public final class StackUpgradesForge {
         ITEMS.register(modBus);
 
         ForgeConfig.register(ModLoadingContext.get(), modBus);
+        ForgeConfigScreen.register();
 
         modBus.addListener(StackUpgradesForge::addCreativeTabEntries);
         modBus.addListener(StackUpgradesForge::logConfiguration);
@@ -82,4 +83,5 @@ public final class StackUpgradesForge {
         }
     }
 }
+
 

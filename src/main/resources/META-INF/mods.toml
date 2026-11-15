@@ -32,3 +32,10 @@ mandatory=true
 versionRange="[${travelersbackpack_version},)"
 ordering="NONE"
 side="BOTH"
+
+[[dependencies.${mod_id}]]
+modId="neoconfigurationscreenport"
+mandatory=false
+versionRange="[0.7.0,)"
+ordering="AFTER"
+side="CLIENT"
