@@ -22,10 +22,14 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.LootTableLoadEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 /**
  * NeoForge entrypoint: items, config, loot and the creative tab.
@@ -53,6 +57,11 @@ public final class StackUpgradesNeoForge {
 
         NeoForgeConfig.register(container, modBus);
 
+        // The screen factory is only resolved by the mod list, i.e. on the client,
+        // so no dist check is needed here.
+        Supplier<IConfigScreenFactory> screenFactory = () -> ConfigurationScreen::new;
+        container.registerExtensionPoint(IConfigScreenFactory.class, screenFactory);
+
         modBus.addListener(StackUpgradesNeoForge::addCreativeTabEntries);
         modBus.addListener(StackUpgradesNeoForge::logConfiguration);
         NeoForge.EVENT_BUS.addListener(StackUpgradesNeoForge::addLootPools);
@@ -78,3 +87,4 @@ public final class StackUpgradesNeoForge {
         }
     }
 }
+

@@ -9,13 +9,11 @@
 
 package com.tbsu.stackupgrades.mixin;
 
-import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
 import com.tbsu.stackupgrades.item.StackUpgradeItem;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
 import com.tbsu.stackupgrades.util.UpgradeRemovalGuard;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,6 +27,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * Also lets the same stack upgrade enter another upgrade slot: Traveler's
  * Backpack refuses any upgrade item that is already present in the backpack,
  * which would block installing several copies of one tier.
+ *
+ * <p>The pickup guard only reacts while the slot really holds one of this mod's
+ * stack upgrades: this class is also the base of tool and filter slots, and a
+ * bare slot-class check refused ordinary transfers.</p>
  */
 @Mixin(UpgradeLockableSlotItemHandler.class)
 public abstract class UpgradeLockableSlotItemHandlerMixin {
@@ -45,11 +47,12 @@ public abstract class UpgradeLockableSlotItemHandlerMixin {
         if (self.isHidden || self.menu == null) {
             return;
         }
-
-        int index = ((Slot) (Object) this).getContainerSlot();
-        if (UpgradeRemovalGuard.blocksRemoval(self.menu.getWrapper(), index)) {
-            UpgradeRemovalGuard.notifyBlocked(player);
+        // The message is left to the screen guard and the removal packet: this
+        // method also runs for clicks the client already refused, and showing it
+        // here printed the warning twice for one attempt.
+        if (UpgradeRemovalGuard.blocksRemovalInSlot(self.menu.getWrapper(), self)) {
             cir.setReturnValue(false);
         }
     }
 }
+

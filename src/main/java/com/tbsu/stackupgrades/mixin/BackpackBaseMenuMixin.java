@@ -10,7 +10,6 @@
 package com.tbsu.stackupgrades.mixin;
 
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
-import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
 import com.tbsu.stackupgrades.util.ClickLimits;
 import com.tbsu.stackupgrades.util.StackLimits;
 import com.tbsu.stackupgrades.util.StackUpgradesConfig;
@@ -26,8 +25,12 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Shift-clicking an upgrade slot does not go through {@code mayPickup}, so the
- * same guard has to be applied to the quick-move path.
+ * Shift-click handling of the backpack menu.
+ *
+ * <p>The removal guard only reacts to a slot that really holds one of this mod's
+ * stack upgrades. Upgrade, tool and filter slots share the lockable slot class,
+ * so a bare slot-class check refused ordinary transfers and raised the
+ * "cannot remove upgrade" message while items were merely being moved.</p>
  */
 @Mixin(BackpackBaseMenu.class)
 public abstract class BackpackBaseMenuMixin {
@@ -39,15 +42,7 @@ public abstract class BackpackBaseMenuMixin {
         }
 
         Slot slot = self.slots.get(index);
-        if (!(slot instanceof UpgradeLockableSlotItemHandler lockable) || lockable.isHidden) {
-            return;
-        }
-
-        // The guard works on the upgrade handler index, which is the container
-        // slot of the upgrade slot and not the menu index of it.
-        int upgradeSlotIndex = slot.getContainerSlot();
-        if (UpgradeRemovalGuard.blocksRemoval(self.getWrapper(), upgradeSlotIndex)) {
-            UpgradeRemovalGuard.notifyBlocked(player);
+        if (UpgradeRemovalGuard.blocksRemovalInSlot(self.getWrapper(), slot)) {
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }
@@ -56,11 +51,6 @@ public abstract class BackpackBaseMenuMixin {
     @Unique
     private static final ThreadLocal<Boolean> tbstackupgrades$stackable = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
-    /**
-     * Shift-click into the backpack merges items whose max stack size is not 64:
-     * the menu copies {@code moveItemStackTo} from the base class, so the same
-     * treatment has to be applied here.
-     */
     @Inject(method = "moveItemStackTo", at = @At("HEAD"))
     private void tbstackupgrades$markRange(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection,
                                            CallbackInfoReturnable<Boolean> cir) {
@@ -91,3 +81,4 @@ public abstract class BackpackBaseMenuMixin {
         return ClickLimits.allowance(slot.getMaxStackSize(stack), stack);
     }
 }
+

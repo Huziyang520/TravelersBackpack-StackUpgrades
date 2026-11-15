@@ -43,7 +43,7 @@ import java.util.Locale;
  * <ul>
  *     <li>adds a "amount / capacity" line to the tooltip of backpack slots, mirroring
  *     Sophisticated Backpacks;</li>
- *     <li>refuses clicks on an upgrade slot while oversized stacks would be left
+ *     <li>refuses clicks on a stack upgrade slot while oversized stacks would be left
  *     behind, and draws the warning as a red banner (the action bar is not
  *     rendered while a container screen is open).</li>
  * </ul>
@@ -109,9 +109,17 @@ public abstract class AbstractContainerScreenMixin {
             return;
         }
 
+        // Only taking the upgrade out counts as a removal attempt. Clicking an
+        // upgrade slot while the cursor already holds items inserts them, which
+        // must stay silent and must not be cancelled.
+        if (clickType == ClickType.PICKUP
+                && !((AbstractContainerScreen<?>) (Object) this).getMenu().getCarried().isEmpty()) {
+            return;
+        }
+
         BackpackWrapper wrapper = lockable.menu == null ? null : lockable.menu.getWrapper();
-        int index = slot.getContainerSlot();
-        if (UpgradeRemovalGuard.blocksRemoval(wrapper, index)) {
+        if (UpgradeRemovalGuard.blocksRemovalInSlot(wrapper, slot)) {
+            int index = slot.getContainerSlot();
             StackUpgradeWarning.show(UpgradeRemovalGuard.remainingLimit(wrapper, index));
             ci.cancel();
         }

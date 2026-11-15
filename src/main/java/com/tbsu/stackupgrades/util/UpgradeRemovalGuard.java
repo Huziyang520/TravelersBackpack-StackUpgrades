@@ -10,11 +10,14 @@ package com.tbsu.stackupgrades.util;
 
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
+import com.tiviacz.travelersbackpack.inventory.menu.slot.UpgradeLockableSlotItemHandler;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
+import com.tbsu.stackupgrades.item.StackUpgradeItem;
 import com.tbsu.stackupgrades.upgrade.StackUpgrade;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 /**
@@ -26,6 +29,24 @@ import net.minecraft.world.item.ItemStack;
  */
 public final class UpgradeRemovalGuard {
     private UpgradeRemovalGuard() {
+    }
+
+    /**
+     * Guard for a slot the player is interacting with.
+     *
+     * <p>Every upgrade slot is "lockable", and the slots of other upgrades and of
+     * tools share that class. Only a slot that currently holds one of this mod's
+     * stack upgrades may refuse the interaction, otherwise ordinary item movement
+     * would be blocked and would raise the removal message.</p>
+     */
+    public static boolean blocksRemovalInSlot(BackpackWrapper wrapper, Slot slot) {
+        if (slot == null || !(slot instanceof UpgradeLockableSlotItemHandler)) {
+            return false;
+        }
+        if (!(slot.getItem().getItem() instanceof StackUpgradeItem)) {
+            return false;
+        }
+        return blocksRemoval(wrapper, slot.getContainerSlot());
     }
 
     /**

@@ -13,15 +13,18 @@
     "ServerActionsMixin",
     "StackHandlerMixin",
     "StackSlotMixin",
+    "UpgradeHandlerMixin",
     "UpgradeLockableSlotItemHandlerMixin",
     "UpgradeManagerMixin"
   ],
   "client": [
     "client.AbstractContainerScreenMixin",
     "client.GuiGraphicsMixin",
-    "client.UpgradeWidgetBaseMixin"
+    "client.UpgradeWidgetBaseMixin",
+    "client.UpgradeWidgetClickMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   }
 }
+
