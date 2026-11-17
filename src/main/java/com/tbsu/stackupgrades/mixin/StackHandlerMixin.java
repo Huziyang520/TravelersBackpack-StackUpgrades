@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
@@ -82,5 +83,27 @@ public abstract class StackHandlerMixin implements StackLimitProvider {
         }
 
         cir.setReturnValue(StackLimits.capacity(stack, multiplier));
+    }
+
+    /**
+     * Extraction is capped at the item's own max stack size, so anything that
+     * already moved an oversized stack into its own container could only get one
+     * vanilla stack removed here and the rest stayed in the slot.
+     */
+    @Redirect(method = "extractItem",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getMaxStackSize()I"))
+    private int tbstackupgrades$extractLimit(ItemStack stack) {
+        int itemMax = stack.getMaxStackSize();
+        BackpackWrapper wrapper = this.tbstackupgrades$wrapper;
+        if (wrapper == null) {
+            return itemMax;
+        }
+
+        double multiplier = StackLimits.multiplier(wrapper);
+        if (multiplier <= 1.0D) {
+            return itemMax;
+        }
+
+        return Math.max(itemMax, StackLimits.capacity(stack, multiplier));
     }
 }
