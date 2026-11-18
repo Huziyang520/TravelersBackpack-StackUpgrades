@@ -10,6 +10,8 @@ authors="${mod_author}"
 displayURL="https://www.curseforge.com/minecraft/mc-mods/travelers-backpack-stack-upgrades"
 issueTrackerURL="https://github.com/Huziyang520/TravelersBackpack-StackUpgrades/issues"
 iconFile="assets/tbstackupgrades/icon.png"
+# 26.1 and older only know `logoFile`; 26.2+ prefers `iconFile` and keeps this one ignored.
+logoFile="assets/tbstackupgrades/icon.png"
 description='''${description}'''
 
 [[mixins]]
