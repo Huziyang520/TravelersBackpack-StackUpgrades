@@ -35,7 +35,7 @@
     "fabric-api": "*",
     "minecraft": "${minecraft_version_range_fabric}",
     "java": ">=25",
-    "travelersbackpack": ">=11.4.0"
+    "travelersbackpack": ">=${travelersbackpack_version}"
   },
   "recommends": {
     "modmenu": "*",
