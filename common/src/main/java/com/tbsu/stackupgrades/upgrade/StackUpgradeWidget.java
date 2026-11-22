@@ -10,6 +10,7 @@ package com.tbsu.stackupgrades.upgrade;
 
 import com.tiviacz.travelersbackpack.client.screens.BackpackScreen;
 import com.tiviacz.travelersbackpack.client.screens.widgets.UpgradeWidgetBase;
+import com.tiviacz.travelersbackpack.client.screens.widgets.WidgetBase;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
 import com.tbsu.stackupgrades.util.StackLimits;
@@ -29,6 +30,14 @@ import java.util.function.Consumer;
 public class StackUpgradeWidget extends UpgradeWidgetBase<StackUpgrade> {
     public StackUpgradeWidget(BackpackScreen screen, StackUpgrade upgrade, Point pos) {
         super(screen, upgrade, pos, new Point(0, 0), "screen.tbstackupgrades.stack_upgrade");
+    }
+
+    /**
+     * Declared to return {@link WidgetBase} so that {@code StackUpgrade} never
+     * names this class in a type the verifier has to check on the server.
+     */
+    public static WidgetBase<?> create(BackpackScreen screen, StackUpgrade upgrade, int x, int y) {
+        return new StackUpgradeWidget(screen, upgrade, new Point(screen.getGuiLeft() + x, screen.getGuiTop() + y));
     }
 
     @Override
