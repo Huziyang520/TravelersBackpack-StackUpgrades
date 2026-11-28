@@ -16,6 +16,7 @@ import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
+import com.tbsu.stackupgrades.client.StackUpgradeWidget;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
@@ -46,13 +47,11 @@ public class StackUpgrade extends UpgradeBase<StackUpgrade> {
         return false;
     }
 
-    /**
-     * Sidebar icon of the upgrade slot. Loaders shipping the client classes in
-     * the same jar (this branch) call it from the backpack screen.
-     */
+    // Built through the client factory: naming the widget here would make the
+    // verifier load client classes when a dedicated server loads this class.
     @Override
     public WidgetBase<?> createWidget(BackpackScreen screen, int x, int y) {
-        return new StackUpgradeWidget(screen, this, new Point(screen.getGuiLeft() + x, screen.getGuiTop() + y));
+        return StackUpgradeWidget.create(screen, this, x, y);
     }
 
     @Override
