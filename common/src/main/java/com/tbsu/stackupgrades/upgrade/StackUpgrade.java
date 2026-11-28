@@ -50,9 +50,14 @@ public class StackUpgrade extends UpgradeBase<StackUpgrade> {
      * Sidebar icon. Only Fabric's client screen interface declares this method,
      * so it is not annotated as an override: on NeoForge it is simply never
      * called and the upgrade works without its own icon.
+     *
+     * <p>The widget is built by a static factory on purpose: returning
+     * {@code new StackUpgradeWidget(...)} here makes the bytecode verifier load
+     * the widget (and with it client-only Minecraft classes) as soon as this
+     * class is loaded, which crashes dedicated servers.</p>
      */
     public WidgetBase<?> createWidget(BackpackScreen screen, int x, int y) {
-        return new StackUpgradeWidget(screen, this, new Point(screen.getGuiLeft() + x, screen.getGuiTop() + y));
+        return StackUpgradeWidget.create(screen, this, x, y);
     }
 
     @Override
