@@ -16,6 +16,7 @@ import com.tiviacz.travelersbackpack.inventory.UpgradeManager;
 import com.tiviacz.travelersbackpack.inventory.menu.BackpackBaseMenu;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
 import com.tiviacz.travelersbackpack.inventory.upgrades.UpgradeBase;
+import com.tbsu.stackupgrades.client.StackUpgradeWidget;
 import net.minecraft.world.inventory.Slot;
 
 import java.util.List;
@@ -46,16 +47,9 @@ public class StackUpgrade extends UpgradeBase<StackUpgrade> {
         return false;
     }
 
-    /**
-     * Sidebar icon. Only Fabric's client screen interface declares this method,
-     * so it is not annotated as an override: on NeoForge it is simply never
-     * called and the upgrade works without its own icon.
-     *
-     * <p>The widget is built by a static factory on purpose: returning
-     * {@code new StackUpgradeWidget(...)} here makes the bytecode verifier load
-     * the widget (and with it client-only Minecraft classes) as soon as this
-     * class is loaded, which crashes dedicated servers.</p>
-     */
+    // Fabric's IUpgrade declares this; NeoForge registers widgets instead, so this
+    // is dead code there. Building it through the client factory keeps the verifier
+    // from loading client classes when a dedicated server loads this class.
     public WidgetBase<?> createWidget(BackpackScreen screen, int x, int y) {
         return StackUpgradeWidget.create(screen, this, x, y);
     }

@@ -6,13 +6,15 @@
  * 注意：mixin/ 目录下的注入层类采用 LGPL-3.0-or-later OR MIT 双许可。
  */
 
-package com.tbsu.stackupgrades.upgrade;
+package com.tbsu.stackupgrades.client;
 
 import com.tiviacz.travelersbackpack.client.screens.BackpackScreen;
 import com.tiviacz.travelersbackpack.client.screens.widgets.UpgradeWidgetBase;
 import com.tiviacz.travelersbackpack.client.screens.widgets.WidgetBase;
 import com.tiviacz.travelersbackpack.inventory.BackpackWrapper;
 import com.tiviacz.travelersbackpack.inventory.upgrades.Point;
+import com.tbsu.stackupgrades.upgrade.StackTier;
+import com.tbsu.stackupgrades.upgrade.StackUpgrade;
 import com.tbsu.stackupgrades.util.StackLimits;
 import net.minecraft.network.chat.Component;
 
@@ -20,22 +22,16 @@ import java.util.Locale;
 import java.util.function.Consumer;
 
 /**
- * Sidebar widget for a stack upgrade. Stack upgrades have no tab of their own,
- * so this widget only provides a tooltip for the icon inside the upgrade slot
- * (clicking it removes the upgrade, which is handled by the base class).
- *
- * <p>Client only: instantiated from {@code StackUpgrade#createWidget}, which the
- * backpack screen calls on the client.</p>
+ * Sidebar icon of a stack upgrade: stack upgrades have no tab, so this only
+ * draws the slot icon and its tooltip. Client only — the class extends
+ * {@code WidgetBase}, which implements {@code Renderable}.
  */
 public class StackUpgradeWidget extends UpgradeWidgetBase<StackUpgrade> {
     public StackUpgradeWidget(BackpackScreen screen, StackUpgrade upgrade, Point pos) {
         super(screen, upgrade, pos, new Point(0, 0), "screen.tbstackupgrades.stack_upgrade");
     }
 
-    /**
-     * Declared to return {@link WidgetBase} so that {@code StackUpgrade} never
-     * names this class in a type the verifier has to check on the server.
-     */
+    // Return type is the base type so callers never have to name this class.
     public static WidgetBase<?> create(BackpackScreen screen, StackUpgrade upgrade, int x, int y) {
         return new StackUpgradeWidget(screen, upgrade, new Point(screen.getGuiLeft() + x, screen.getGuiTop() + y));
     }
